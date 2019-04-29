@@ -14,6 +14,7 @@ ActiveRecord::Schema.define(version: 2019_04_29_060140) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+  enable_extension "postgis"
 
   create_table "companies", comment: "公司", force: :cascade do |t|
     t.string "name", comment: "注册名"
@@ -30,6 +31,13 @@ ActiveRecord::Schema.define(version: 2019_04_29_060140) do
     t.datetime "deleted_at", comment: "删除时间"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+  end
+
+  create_table "spatial_ref_sys", primary_key: "srid", id: :integer, default: nil, force: :cascade do |t|
+    t.string "auth_name", limit: 256
+    t.integer "auth_srid"
+    t.string "srtext", limit: 2048
+    t.string "proj4text", limit: 2048
   end
 
   create_table "users", comment: "用户", force: :cascade do |t|
