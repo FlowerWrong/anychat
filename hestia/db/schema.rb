@@ -10,11 +10,21 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_04_29_060140) do
+ActiveRecord::Schema.define(version: 2019_04_29_083226) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
   enable_extension "postgis"
+
+  create_table "chat_messages", comment: "聊天消息", force: :cascade do |t|
+    t.integer "from", comment: "发送人"
+    t.integer "to", comment: "接收人"
+    t.text "content", comment: "内容"
+    t.datetime "read_at", comment: "已读时间"
+    t.datetime "deleted_at", comment: "删除时间"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+  end
 
   create_table "companies", comment: "公司", force: :cascade do |t|
     t.string "name", comment: "注册名"
