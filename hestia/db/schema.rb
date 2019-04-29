@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_04_29_074523) do
+ActiveRecord::Schema.define(version: 2019_04_29_060140) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -33,24 +33,6 @@ ActiveRecord::Schema.define(version: 2019_04_29_074523) do
     t.datetime "updated_at", precision: 6, null: false
   end
 
-  create_table "customers", comment: "客户", force: :cascade do |t|
-    t.string "name", comment: "姓名"
-    t.string "mobile", comment: "手机"
-    t.string "email", comment: "邮箱"
-    t.string "avatar", comment: "头像"
-    t.string "note", comment: "备注"
-    t.string "ua", comment: "user agent"
-    t.string "ip", comment: "IP地址"
-    t.string "os", comment: "操作系统"
-    t.string "browser", comment: "浏览器"
-    t.point "location", comment: "地理位置"
-    t.datetime "first_login_at", comment: "第一次登录时间"
-    t.datetime "last_active_at", comment: "最后一次活跃时间"
-    t.datetime "deleted_at", comment: "删除时间"
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
-  end
-
   create_table "spatial_ref_sys", primary_key: "srid", id: :integer, default: nil, force: :cascade do |t|
     t.string "auth_name", limit: 256
     t.integer "auth_srid"
@@ -64,6 +46,12 @@ ActiveRecord::Schema.define(version: 2019_04_29_074523) do
     t.string "mobile", comment: "手机"
     t.string "email", comment: "邮箱"
     t.string "avatar", comment: "头像"
+    t.string "note", comment: "备注"
+    t.string "ua", comment: "user agent"
+    t.string "ip", comment: "IP地址"
+    t.string "os", comment: "操作系统"
+    t.string "browser", comment: "浏览器"
+    t.point "location", comment: "地理位置"
     t.integer "company_id", comment: "公司"
     t.datetime "first_login_at", comment: "第一次登录时间"
     t.datetime "last_active_at", comment: "最后一次活跃时间"
