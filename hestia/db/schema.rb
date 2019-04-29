@@ -63,6 +63,7 @@ ActiveRecord::Schema.define(version: 2019_04_29_083226) do
     t.string "browser", comment: "浏览器"
     t.point "location", comment: "地理位置"
     t.integer "company_id", comment: "公司"
+    t.string "role", comment: "角色"
     t.datetime "first_login_at", comment: "第一次登录时间"
     t.datetime "last_active_at", comment: "最后一次活跃时间"
     t.datetime "deleted_at", comment: "删除时间"

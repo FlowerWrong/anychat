@@ -20,6 +20,7 @@ Faker::Config.locale = 'zh-CN'
   company.save!
 
   1.upto(3).each do |j|
+    role = j == 1 ? 'member' : 'admin'
     user = User.new(
       username: Faker::Name.unique.name,
       password: '123456',
@@ -28,6 +29,7 @@ Faker::Config.locale = 'zh-CN'
       email: Faker::Internet.email,
       avatar: Faker::Avatar.image(j, '50x50', 'jpg'),
       company_id: company.id,
+      role: role,
       first_login_at: Time.now,
       last_active_at: Time.now
     )
