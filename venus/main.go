@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/FlowerWrong/new_chat/venus/actions"
+	"github.com/FlowerWrong/new_chat/venus/chat"
 	"github.com/FlowerWrong/new_chat/venus/config"
 	"github.com/FlowerWrong/new_chat/venus/db"
 	"github.com/FlowerWrong/new_chat/venus/models"
@@ -50,14 +51,21 @@ func main() {
 		log.Println(user.Username)
 	}
 
+	hub := chat.NewHub()
+	go hub.Run()
+
 	app := gin.Default()
+
+	app.LoadHTMLGlob("views/*")
+	app.GET("/", actions.HomeHandler)
+
 	v1 := app.Group("/api/v1")
 	{
 		v1.GET("/ping", actions.PingHandler)
 		v1.POST("/upload", actions.UploadHandler)
 	}
 	app.GET("/ws", func(c *gin.Context) {
-		actions.WsHandler(c.Writer, c.Request)
+		actions.WsHandler(hub, c.Writer, c.Request)
 	})
 	err = app.Run(":8080")
 	if err != nil {
