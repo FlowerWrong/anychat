@@ -1,6 +1,7 @@
 class CreateCompanies < ActiveRecord::Migration[6.0]
   def change
     create_table :companies, comment: '公司' do |t|
+      t.string :uuid, comment: 'uuid'
       t.string :name, comment: '注册名'
       t.string :alias_name, comment: '别名'
       t.text :intro, comment: '介绍'

@@ -6,6 +6,7 @@ import (
 
 type ChatMessage struct {
 	Id        int64     `xorm:"pk autoincr BIGINT"`
+	Uuid      string    `xorm:"VARCHAR"`
 	From      int       `xorm:"INTEGER"`
 	To        int       `xorm:"INTEGER"`
 	Content   string    `xorm:"TEXT"`

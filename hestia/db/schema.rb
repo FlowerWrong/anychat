@@ -17,6 +17,7 @@ ActiveRecord::Schema.define(version: 2019_04_29_083226) do
   enable_extension "postgis"
 
   create_table "chat_messages", comment: "聊天消息", force: :cascade do |t|
+    t.string "uuid", comment: "uuid"
     t.integer "from", comment: "发送人"
     t.integer "to", comment: "接收人"
     t.text "content", comment: "内容"
@@ -27,6 +28,7 @@ ActiveRecord::Schema.define(version: 2019_04_29_083226) do
   end
 
   create_table "companies", comment: "公司", force: :cascade do |t|
+    t.string "uuid", comment: "uuid"
     t.string "name", comment: "注册名"
     t.string "alias_name", comment: "别名"
     t.text "intro", comment: "介绍"
@@ -51,6 +53,7 @@ ActiveRecord::Schema.define(version: 2019_04_29_083226) do
   end
 
   create_table "users", comment: "用户", force: :cascade do |t|
+    t.string "uuid", comment: "uuid"
     t.string "username", comment: "用户名"
     t.string "password_digest", comment: "密码"
     t.string "mobile", comment: "手机"

@@ -1,6 +1,7 @@
 class CreateUsers < ActiveRecord::Migration[6.0]
   def change
     create_table :users, comment: '用户' do |t|
+      t.string :uuid, comment: 'uuid'
       t.string :username, comment: '用户名'
       t.string :password_digest, comment: '密码'
       t.string :mobile, comment: '手机'

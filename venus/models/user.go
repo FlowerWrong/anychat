@@ -6,6 +6,7 @@ import (
 
 type User struct {
 	Id             int64     `xorm:"pk autoincr BIGINT"`
+	Uuid           string    `xorm:"VARCHAR"`
 	Username       string    `xorm:"VARCHAR"`
 	PasswordDigest string    `xorm:"VARCHAR"`
 	Mobile         string    `xorm:"VARCHAR"`

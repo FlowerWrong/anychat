@@ -5,6 +5,7 @@ Faker::Config.locale = 'zh-CN'
 1.upto(100).each do |i|
   company = Company.new(
     id: i,
+    uuid: SecureRandom.uuid,
     name: Faker::Company.name,
     alias_name: '',
     intro: Faker::Company.bs,
@@ -22,6 +23,7 @@ Faker::Config.locale = 'zh-CN'
   1.upto(3).each do |j|
     role = j == 1 ? 'admin' : 'member'
     user = User.new(
+      uuid: SecureRandom.uuid,
       username: Faker::Name.unique.name,
       password: '123456',
       password_confirmation: '123456',

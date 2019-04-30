@@ -7,6 +7,7 @@ import (
 // Company ...
 type Company struct {
 	Id                      int64     `xorm:"pk autoincr BIGINT"`
+	Uuid                    string    `xorm:"VARCHAR"`
 	Name                    string    `xorm:"VARCHAR"`
 	AliasName               string    `xorm:"VARCHAR"`
 	Intro                   string    `xorm:"TEXT"`
