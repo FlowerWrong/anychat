@@ -56,6 +56,9 @@ func main() {
 		v1.GET("/ping", actions.PingHandler)
 		v1.POST("/upload", actions.UploadHandler)
 	}
+	app.GET("/ws", func(c *gin.Context) {
+		actions.WsHandler(c.Writer, c.Request)
+	})
 	err = app.Run(":8080")
 	if err != nil {
 		log.Fatal(err)

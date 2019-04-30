@@ -11,7 +11,7 @@ import (
 // UploadHandler ...
 // Set a lower memory limit for multipart forms (default is 32 MiB)
 // router.MaxMultipartMemory = 8 << 20  // 8 MiB
-// curl -X POST -H "Content-Type: multipart/form-data" "http://localhost:8080/upload" -F "file=@/Users/kingyang/Pictures/gaoyuanyuan.jpg"
+// curl -X POST -H "Content-Type: multipart/form-data" "http://localhost:8080/api/v1/upload" -F "file=@/Users/kingyang/Pictures/gaoyuanyuan.jpg"
 func UploadHandler(c *gin.Context) {
 	// single file
 	file, _ := c.FormFile("file")
