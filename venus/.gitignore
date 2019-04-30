@@ -2,3 +2,5 @@
 config/settings.development.yml
 config/settings.test.yml
 config/settings.production.yml
+
+tmp/

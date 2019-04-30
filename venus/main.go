@@ -6,9 +6,11 @@ import (
 	"runtime"
 	"time"
 
+	"github.com/FlowerWrong/new_chat/venus/actions"
 	"github.com/FlowerWrong/new_chat/venus/config"
 	"github.com/FlowerWrong/new_chat/venus/db"
 	"github.com/FlowerWrong/new_chat/venus/models"
+	"github.com/gin-gonic/gin"
 	"github.com/spf13/viper"
 )
 
@@ -46,5 +48,16 @@ func main() {
 	}
 	for _, user := range users {
 		log.Println(user.Username)
+	}
+
+	app := gin.Default()
+	v1 := app.Group("/api/v1")
+	{
+		v1.GET("/ping", actions.PingHandler)
+		v1.POST("/upload", actions.UploadHandler)
+	}
+	err = app.Run(":8080")
+	if err != nil {
+		log.Fatal(err)
 	}
 }
