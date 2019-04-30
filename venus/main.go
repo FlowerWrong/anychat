@@ -2,37 +2,49 @@ package main
 
 import (
 	"log"
+	"math/rand"
+	"runtime"
+	"time"
 
-	"github.com/FlowerWrong/new_chat/venus/actions"
+	"github.com/FlowerWrong/new_chat/venus/config"
+	"github.com/FlowerWrong/new_chat/venus/db"
+	"github.com/FlowerWrong/new_chat/venus/models"
+	"github.com/spf13/viper"
 )
 
-// main is the starting point for your Buffalo application.
-// You can feel free and add to this `main` method, change
-// what it does, etc...
-// All we ask is that, at some point, you make sure to
-// call `app.Serve()`, unless you don't want to start your
-// application that is. :)
 func main() {
-	app := actions.App()
-	if err := app.Serve(); err != nil {
+	rand.Seed(time.Now().UnixNano())
+	log.SetFlags(log.LstdFlags | log.Lshortfile)
+	runtime.GOMAXPROCS(runtime.NumCPU())
+
+	err := config.Setup()
+	if err != nil {
 		log.Fatal(err)
 	}
+	log.Println(viper.Get("db_url"), config.ENV)
+
+	dbVersion, err := db.Engine().SqlTemplateClient("version.tpl").Query().Json()
+	if err != nil {
+		log.Fatal(err)
+	}
+	log.Println(dbVersion)
+
+	err = db.Redis().SetNX("ping", "pong", 10*time.Second).Err()
+	if err != nil {
+		log.Fatal(err)
+	}
+	pong, err := db.Redis().Get("ping").Result()
+	if err != nil {
+		log.Fatal(err)
+	}
+	log.Println(pong)
+
+	var users []models.User
+	err = db.Engine().Where("deleted_at is NULL").Limit(10, 0).Find(&users)
+	if err != nil {
+		log.Fatal(err)
+	}
+	for _, user := range users {
+		log.Println(user.Username)
+	}
 }
-
-/*
-# Notes about `main.go`
-
-## SSL Support
-
-We recommend placing your application behind a proxy, such as
-Apache or Nginx and letting them do the SSL heavy lifting
-for you. https://gobuffalo.io/en/docs/proxy
-
-## Buffalo Build
-
-When `buffalo build` is run to compile your binary, this `main`
-function will be at the heart of that binary. It is expected
-that your `main` function will start your application using
-the `app.Serve()` method.
-
-*/
