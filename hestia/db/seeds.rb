@@ -20,6 +20,15 @@ Faker::Config.locale = 'zh-CN'
   )
   company.save!
 
+  app = App.new(
+    uuid: SecureRandom.uuid,
+    name: company.name,
+    company_id: company.id,
+    intro: company.name,
+    domains: [Faker::Internet.domain_name]
+  )
+  app.save!
+
   1.upto(3).each do |j|
     role = j == 1 ? 'admin' : 'member'
     user = User.new(
@@ -31,6 +40,7 @@ Faker::Config.locale = 'zh-CN'
       email: Faker::Internet.email,
       avatar: Faker::Avatar.image(j, '50x50', 'jpg'),
       company_id: company.id,
+      app_id: app.id,
       role: role,
       first_login_at: Time.now,
       last_active_at: Time.now

@@ -16,11 +16,25 @@ ActiveRecord::Schema.define(version: 2019_04_29_083226) do
   enable_extension "plpgsql"
   enable_extension "postgis"
 
+  create_table "apps", comment: "企业应用", force: :cascade do |t|
+    t.string "uuid", comment: "uuid"
+    t.string "name", comment: "名称"
+    t.integer "company_id", comment: "公司"
+    t.text "intro", comment: "介绍"
+    t.string "domains", comment: "域名列表", array: true
+    t.datetime "deleted_at", comment: "删除时间"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["company_id"], name: "index_apps_on_company_id"
+    t.index ["domains"], name: "index_apps_on_domains", using: :gin
+  end
+
   create_table "chat_messages", comment: "聊天消息", force: :cascade do |t|
     t.string "uuid", comment: "uuid"
     t.integer "from", comment: "发送人"
     t.integer "to", comment: "接收人"
     t.text "content", comment: "内容"
+    t.string "ack", comment: "req ack"
     t.datetime "read_at", comment: "已读时间"
     t.datetime "deleted_at", comment: "删除时间"
     t.datetime "created_at", precision: 6, null: false
@@ -62,17 +76,20 @@ ActiveRecord::Schema.define(version: 2019_04_29_083226) do
     t.string "note", comment: "备注"
     t.string "ua", comment: "user agent"
     t.string "ip", comment: "IP地址"
+    t.string "lan_ip", comment: "LAN IP地址"
     t.string "os", comment: "操作系统"
     t.string "browser", comment: "浏览器"
     t.float "latitude", comment: "纬度"
     t.float "longitude", comment: "经度"
     t.integer "company_id", comment: "公司"
+    t.integer "app_id", comment: "应用"
     t.string "role", comment: "角色"
     t.datetime "first_login_at", comment: "第一次登录时间"
     t.datetime "last_active_at", comment: "最后一次活跃时间"
     t.datetime "deleted_at", comment: "删除时间"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.index ["app_id"], name: "index_users_on_app_id"
     t.index ["company_id"], name: "index_users_on_company_id"
   end
 

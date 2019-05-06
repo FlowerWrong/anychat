@@ -5,6 +5,7 @@ class CreateChatMessages < ActiveRecord::Migration[6.0]
       t.integer :from, comment: '发送人'
       t.integer :to, comment: '接收人'
       t.text :content, comment: '内容'
+      t.string :ack, comment: 'req ack'
       t.datetime :read_at, comment: '已读时间'
       t.datetime :deleted_at, comment: '删除时间'
 

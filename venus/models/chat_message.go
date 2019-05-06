@@ -7,13 +7,14 @@ import (
 type ChatMessage struct {
 	Id        int64     `xorm:"pk autoincr BIGINT"`
 	Uuid      string    `xorm:"VARCHAR"`
-	From      int       `xorm:"INTEGER"`
-	To        int       `xorm:"INTEGER"`
+	From      int64     `xorm:"INTEGER"`
+	To        int64     `xorm:"INTEGER"`
 	Content   string    `xorm:"TEXT"`
+	Ack       string    `xorm:"VARCHAR"`
 	ReadAt    time.Time `xorm:"DATETIME"`
-	DeletedAt time.Time `xorm:"DATETIME"`
-	CreatedAt time.Time `xorm:"not null DATETIME"`
-	UpdatedAt time.Time `xorm:"not null DATETIME"`
+	DeletedAt time.Time `xorm:"deleted"`
+	CreatedAt time.Time `xorm:"created"`
+	UpdatedAt time.Time `xorm:"updated"`
 }
 
 // TableName ...

@@ -8,5 +8,5 @@ import (
 
 // WsHandler ...
 func WsHandler(hub *chat.Hub, w http.ResponseWriter, r *http.Request) {
-	chat.ServeWs(hub, w, r)
+	chat.HandleWs(hub, w, r)
 }
