@@ -1,5 +1,7 @@
 package chat
 
+import "errors"
+
 // Hub maintains the set of active clients and broadcasts messages to the
 // clients.
 type Hub struct {
@@ -48,4 +50,13 @@ func (h *Hub) Run() {
 			}
 		}
 	}
+}
+
+func (h *Hub) FindClientByUserId(userID int64) (*Client, error) {
+	for client := range h.clients {
+		if client.userID == userID {
+			return client, nil
+		}
+	}
+	return nil, errors.New("record not found")
 }

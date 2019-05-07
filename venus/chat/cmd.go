@@ -31,12 +31,6 @@ type Error struct {
 	Msg  string `json:"msg"`
 }
 
-type Single struct {
-	From string `json:"from"`
-	To   string `json:"to"`
-	Msg  string `json:"msg"`
-}
-
 // LoginCmd ...
 // navigator.userAgent
 // local ip https://jsfiddle.net/ourcodeworld/cks0v68q/
@@ -50,4 +44,20 @@ type LoginCmd struct {
 type LoginRes struct {
 	Uuid   string `json:"uuid"`
 	ChatID string `json:"chatID"`
+}
+
+type SingleChatCmd struct {
+	Base
+	From string `json:"from"`
+	To   string `json:"to"`
+	Msg  string `json:"msg"`
+}
+
+type SingleChatRes struct {
+	Cmd  int32  `json:"cmd"`
+	Ack  string `json:"ack"`
+	From string `json:"from"`
+	To   string `json:"to"`
+	Msg  string `json:"msg"`
+	Uuid string `json:"uuid"`
 }

@@ -9,6 +9,7 @@ import (
 
 	"github.com/FlowerWrong/god/db"
 	"github.com/FlowerWrong/new_chat/venus/models"
+	"github.com/FlowerWrong/new_chat/venus/services"
 	"github.com/FlowerWrong/new_chat/venus/utils"
 	"github.com/FlowerWrong/util"
 	"github.com/gorilla/websocket"
@@ -48,6 +49,7 @@ type Client struct {
 	realIP    string
 	companyID int64
 	appID     int64
+	userID    int64
 }
 
 // readPump pumps messages from the websocket connection to the hub.
@@ -116,6 +118,7 @@ func (c *Client) readPump() {
 					log.Println("insert failed", affected)
 					break
 				}
+				c.userID = user.Id // 设置client user id
 
 				// 选择对象
 				users := make([]models.User, 0)
@@ -133,9 +136,74 @@ func (c *Client) readPump() {
 					break
 				}
 
-				c.hub.broadcast <- data
+				c.send <- data
 			case WS_LOGOUT:
 			case WS_SINGLE_CHAT:
+				var singleChatCmd SingleChatCmd
+				err = json.Unmarshal(req.Body, &singleChatCmd)
+				if err != nil {
+					log.Println(err)
+					break
+				}
+
+				from, err := services.FindUserByUuid(singleChatCmd.From)
+				if err != nil {
+					log.Println(err)
+					break
+				}
+				to, err := services.FindUserByUuid(singleChatCmd.To)
+				if err != nil {
+					log.Println(err)
+					break
+				}
+
+				log.Println(from.Ip, to.Ip)
+
+				chatMsg := new(models.ChatMessage)
+				chatMsg.From = from.Id
+				chatMsg.To = to.Id
+				chatMsg.Uuid = util.UUID()
+				chatMsg.Ack = singleChatCmd.Ack
+				chatMsg.Content = singleChatCmd.Msg
+				affected, err := db.Engine().Insert(chatMsg)
+				if err != nil {
+					log.Println(err)
+					break
+				}
+				if affected != 1 {
+					log.Println("insert failed", affected)
+					break
+				}
+
+				// check to is online or not
+				toClient, err := c.hub.FindClientByUserId(to.Id)
+				if err != nil {
+					log.Println(err)
+					// offline
+
+					// email and sms notification TODO
+				} else {
+					// online
+					singleChatRes := SingleChatRes{Uuid: chatMsg.Uuid, Cmd: singleChatCmd.Cmd, Ack: singleChatCmd.Ack, From: singleChatCmd.From, To: singleChatCmd.To, Msg: singleChatCmd.Msg}
+					data, err := json.Marshal(singleChatRes)
+					if err != nil {
+						log.Println(err)
+						break
+					}
+					toClient.send <- data
+
+					// 标记已读
+					chatMsg.ReadAt = time.Now()
+					affected, err = db.Engine().Id(chatMsg.Id).Cols("read_at").Update(&chatMsg)
+					if err != nil {
+						log.Println(err)
+						break
+					}
+					if affected != 1 {
+						log.Println("update failed", affected)
+						break
+					}
+				}
 			}
 		case websocket.BinaryMessage:
 			log.Println("BinaryMessage")
