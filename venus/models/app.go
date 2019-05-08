@@ -10,6 +10,7 @@ type App struct {
 	Id        int64        `xorm:"pk autoincr BIGINT"`
 	Uuid      string       `xorm:"VARCHAR"`
 	Name      string       `xorm:"VARCHAR"`
+	Token     string       `xorm:"VARCHAR"`
 	CompanyId int64        `xorm:"index INTEGER"`
 	Intro     string       `xorm:"TEXT"`
 	Domains   ext.StrArray `xorm:"VARCHAR" json:"domains" form:"domains[]"`

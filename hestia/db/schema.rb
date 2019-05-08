@@ -19,6 +19,7 @@ ActiveRecord::Schema.define(version: 2019_04_29_083226) do
   create_table "apps", comment: "企业应用", force: :cascade do |t|
     t.string "uuid", comment: "uuid"
     t.string "name", comment: "名称"
+    t.string "token", comment: "token"
     t.integer "company_id", comment: "公司"
     t.text "intro", comment: "介绍"
     t.string "domains", comment: "域名列表", array: true
@@ -79,8 +80,8 @@ ActiveRecord::Schema.define(version: 2019_04_29_083226) do
     t.string "lan_ip", comment: "LAN IP地址"
     t.string "os", comment: "操作系统"
     t.string "browser", comment: "浏览器"
-    t.float "latitude", comment: "纬度"
-    t.float "longitude", comment: "经度"
+    t.decimal "latitude", precision: 20, scale: 17, comment: "纬度"
+    t.decimal "longitude", precision: 20, scale: 17, comment: "经度"
     t.integer "company_id", comment: "公司"
     t.integer "app_id", comment: "应用"
     t.string "role", comment: "角色"

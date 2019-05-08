@@ -23,6 +23,7 @@ Faker::Config.locale = 'zh-CN'
   app = App.new(
     uuid: SecureRandom.uuid,
     name: company.name,
+    token: SecureRandom.urlsafe_base64,
     company_id: company.id,
     intro: company.name,
     domains: [Faker::Internet.domain_name]

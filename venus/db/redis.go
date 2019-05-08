@@ -25,11 +25,13 @@ func initRedisClient() error {
 
 // Redis return redis client
 func Redis() *redis.Client {
-	redisOnce.Do(func() {
-		err := initRedisClient()
-		if err != nil {
-			panic(err)
-		}
-	})
+	if redisClient == nil {
+		redisOnce.Do(func() {
+			err := initRedisClient()
+			if err != nil {
+				panic(err)
+			}
+		})
+	}
 	return redisClient
 }

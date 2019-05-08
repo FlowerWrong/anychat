@@ -7,13 +7,12 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/FlowerWrong/god/db"
+	"github.com/FlowerWrong/new_chat/venus/db"
 	"github.com/FlowerWrong/new_chat/venus/models"
 	"github.com/FlowerWrong/new_chat/venus/services"
 	"github.com/FlowerWrong/new_chat/venus/utils"
 	"github.com/FlowerWrong/util"
 	"github.com/gorilla/websocket"
-	"github.com/lib/pq"
 	"github.com/mssola/user_agent"
 )
 
@@ -34,6 +33,9 @@ const (
 var upgrader = websocket.Upgrader{
 	ReadBufferSize:  1024,
 	WriteBufferSize: 1024,
+	CheckOrigin: func(r *http.Request) bool {
+		return true
+	},
 }
 
 // Client is a middleman between the websocket connection and the hub.
@@ -78,7 +80,7 @@ func (c *Client) readPump() {
 		}
 		switch msgType {
 		case websocket.TextMessage:
-			log.Println("TextMessage", message)
+			log.Println("TextMessage", string(message))
 			var req Req
 			err = json.Unmarshal(message, &req)
 			if err != nil {
@@ -99,9 +101,6 @@ func (c *Client) readPump() {
 				user.Browser = browserName + ":" + browserVersion
 				user.Os = ua.OS()
 				user.Ip = c.realIP
-				user.LanIp = loginCmd.LanIP
-				user.Latitude = loginCmd.Latitude
-				user.Longitude = loginCmd.Longitude
 
 				user.Uuid = util.UUID()
 				user.CompanyId = c.companyID
@@ -120,16 +119,40 @@ func (c *Client) readPump() {
 				}
 				c.userID = user.Id // 设置client user id
 
+				// check domain
+				// sql := "select * from apps where ? <@ domains limit 1"
+				// domains := []string{loginCmd.Domain}
+				// var apps []models.App
+				// err = db.Engine().SQL(sql, pq.Array(domains)).Find(&apps)
+				// if err != nil {
+				// 	log.Println(err)
+				// 	break
+				// }
+				// if len(apps) == 0 {
+				// 	log.Println("Can not find company app")
+				// 	break
+				// }
+				// app := apps[0]
+
+				app := new(models.App)
+				_, err = db.Engine().Where("token = ?", loginCmd.Token).Get(app)
+				if err != nil {
+					log.Println(err)
+					break
+				}
+				c.companyID = app.CompanyId
+				c.appID = app.Id
+
 				// 选择对象
 				users := make([]models.User, 0)
-				err = db.Engine().Where("role > member and company_id = ? and app_id = ?", c.companyID, c.appID).Find(&users)
+				err = db.Engine().Where("role = 'member' and company_id = ? and app_id = ?", c.companyID, c.appID).Find(&users) // TODO online
 				if err != nil {
 					log.Println(err)
 					break
 				}
 				u := users[rand.Intn(len(users))] // TODO
 
-				loginRes := LoginRes{Uuid: user.Uuid, ChatID: u.Uuid}
+				loginRes := LoginRes{UserID: user.Uuid, ChatID: u.Uuid}
 				data, err := json.Marshal(loginRes)
 				if err != nil {
 					log.Println(err)
@@ -138,6 +161,38 @@ func (c *Client) readPump() {
 
 				c.send <- data
 			case WS_LOGOUT:
+				// TODO
+			case WS_GEO:
+				var geoCmd GeoCmd
+				err = json.Unmarshal(req.Body, &geoCmd)
+				if err != nil {
+					log.Println(err)
+					break
+				}
+
+				user := new(models.User)
+				user.Latitude = geoCmd.Latitude
+				user.Longitude = geoCmd.Longitude
+				_, err = db.Engine().Id(c.userID).Cols("latitude", "longitude").Update(user)
+				if err != nil {
+					log.Println(err)
+					break
+				}
+			case WS_LAN_IP:
+				var lanIPCmd LanIPCmd
+				err = json.Unmarshal(req.Body, &lanIPCmd)
+				if err != nil {
+					log.Println(err)
+					break
+				}
+
+				user := new(models.User)
+				user.LanIp = lanIPCmd.LanIP
+				_, err = db.Engine().Id(c.userID).Cols("lan_ip").Update(user)
+				if err != nil {
+					log.Println(err)
+					break
+				}
 			case WS_SINGLE_CHAT:
 				var singleChatCmd SingleChatCmd
 				err = json.Unmarshal(req.Body, &singleChatCmd)
@@ -163,7 +218,7 @@ func (c *Client) readPump() {
 				chatMsg.From = from.Id
 				chatMsg.To = to.Id
 				chatMsg.Uuid = util.UUID()
-				chatMsg.Ack = singleChatCmd.Ack
+				chatMsg.Ack = req.Ack
 				chatMsg.Content = singleChatCmd.Msg
 				affected, err := db.Engine().Insert(chatMsg)
 				if err != nil {
@@ -184,7 +239,7 @@ func (c *Client) readPump() {
 					// email and sms notification TODO
 				} else {
 					// online
-					singleChatRes := SingleChatRes{Uuid: chatMsg.Uuid, Cmd: singleChatCmd.Cmd, Ack: singleChatCmd.Ack, From: singleChatCmd.From, To: singleChatCmd.To, Msg: singleChatCmd.Msg}
+					singleChatRes := SingleChatRes{UUID: chatMsg.Uuid, Cmd: req.Cmd, Ack: req.Ack, From: singleChatCmd.From, To: singleChatCmd.To, Msg: singleChatCmd.Msg}
 					data, err := json.Marshal(singleChatRes)
 					if err != nil {
 						log.Println(err)
@@ -271,22 +326,7 @@ func HandleWs(hub *Hub, w http.ResponseWriter, r *http.Request) {
 	}
 	realIP := utils.RealIP(r)
 
-	domain := utils.Host(r)
-	sql := "select * from apps where ? <@ domains limit 1"
-	domains := []string{domain}
-	var apps []models.App
-	err = db.Engine().SQL(sql, pq.Array(domains)).Find(&apps)
-	if err != nil {
-		log.Println(err)
-		return
-	}
-	if len(apps) == 0 {
-		log.Println("Can not find company app")
-		return
-	}
-	app := apps[0]
-
-	client := &Client{hub: hub, conn: conn, send: make(chan []byte, maxMessageSize), realIP: realIP, companyID: app.CompanyId, appID: app.Id}
+	client := &Client{hub: hub, conn: conn, send: make(chan []byte, maxMessageSize), realIP: realIP}
 	client.hub.register <- client
 
 	// Allow collection of memory referenced by the caller by doing all work in new goroutines.

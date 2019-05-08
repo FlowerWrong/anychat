@@ -3,6 +3,7 @@ class CreateApps < ActiveRecord::Migration[6.0]
     create_table :apps, comment: '企业应用' do |t|
       t.string :uuid, comment: 'uuid'
       t.string :name, comment: '名称'
+      t.string :token, comment: 'token'
       t.integer :company_id, comment: '公司'
       t.text :intro, comment: '介绍'
       t.string :domains, array: true, comment: '域名列表'
