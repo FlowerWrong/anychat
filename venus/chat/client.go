@@ -119,21 +119,6 @@ func (c *Client) readPump() {
 				}
 				c.userID = user.Id // 设置client user id
 
-				// check domain
-				// sql := "select * from apps where ? <@ domains limit 1"
-				// domains := []string{loginCmd.Domain}
-				// var apps []models.App
-				// err = db.Engine().SQL(sql, pq.Array(domains)).Find(&apps)
-				// if err != nil {
-				// 	log.Println(err)
-				// 	break
-				// }
-				// if len(apps) == 0 {
-				// 	log.Println("Can not find company app")
-				// 	break
-				// }
-				// app := apps[0]
-
 				app := new(models.App)
 				_, err = db.Engine().Where("token = ?", loginCmd.Token).Get(app)
 				if err != nil {
