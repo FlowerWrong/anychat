@@ -12,7 +12,6 @@ import (
 	"github.com/FlowerWrong/new_chat/venus/config"
 	"github.com/FlowerWrong/new_chat/venus/db"
 	"github.com/gin-gonic/gin"
-	"github.com/spf13/viper"
 	ginSwagger "github.com/swaggo/gin-swagger"
 	"github.com/swaggo/gin-swagger/swaggerFiles"
 )
@@ -40,13 +39,13 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	log.Println(viper.Get("db_url"), config.ENV)
+	log.Println("Server launch in", config.ENV)
 
-	dbVersion, err := db.Engine().SqlTemplateClient("version.tpl").Query().Json()
+	dbVersion, err := db.Engine().SqlTemplateClient("version.tpl").Query().List()
 	if err != nil {
 		log.Fatal(err)
 	}
-	log.Println(dbVersion)
+	log.Println(dbVersion[0]["version"])
 
 	err = db.Redis().SetNX("ping", "pong", 10*time.Second).Err()
 	if err != nil {
@@ -56,7 +55,7 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	log.Println(pong)
+	log.Println("redis", pong)
 
 	hub := chat.NewHub()
 	go hub.Run()

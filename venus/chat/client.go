@@ -150,9 +150,20 @@ func (c *Client) readPump() {
 					log.Println(err)
 					break
 				}
-				u := users[rand.Intn(len(users))] // TODO
+				if len(users) == 0 {
+					log.Println("no company users find")
+					break
+				}
+				onlineUsers := c.hub.FindOnlineUserList(&users)
+				var selectedUser models.User
+				if len(onlineUsers) == 0 {
+					log.Println("no online users find")
+					selectedUser = users[rand.Intn(len(users))]
+				} else {
+					selectedUser = *onlineUsers[rand.Intn(len(onlineUsers))]
+				}
 
-				loginRes := LoginRes{UserID: user.Uuid, ChatID: u.Uuid}
+				loginRes := LoginRes{UserID: user.Uuid, ChatID: selectedUser.Uuid}
 				data, err := json.Marshal(loginRes)
 				if err != nil {
 					log.Println(err)
@@ -231,7 +242,7 @@ func (c *Client) readPump() {
 				}
 
 				// check to is online or not
-				toClient, err := c.hub.FindClientByUserId(to.Id)
+				toClient, err := c.hub.FindClientByUserID(to.Id)
 				if err != nil {
 					log.Println(err)
 					// offline

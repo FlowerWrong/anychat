@@ -1,6 +1,10 @@
 package chat
 
-import "errors"
+import (
+	"errors"
+
+	"github.com/FlowerWrong/new_chat/venus/models"
+)
 
 // Hub maintains the set of active clients and broadcasts messages to the
 // clients.
@@ -52,11 +56,24 @@ func (h *Hub) Run() {
 	}
 }
 
-func (h *Hub) FindClientByUserId(userID int64) (*Client, error) {
+// FindClientByUserID ...
+func (h *Hub) FindClientByUserID(userID int64) (*Client, error) {
 	for client := range h.clients {
 		if client.userID == userID {
 			return client, nil
 		}
 	}
 	return nil, errors.New("record not found")
+}
+
+// FindOnlineUserList ...
+func (h *Hub) FindOnlineUserList(users *[]models.User) (onlineUsers []*models.User) {
+	for client := range h.clients {
+		for _, user := range *users {
+			if client.userID == user.Id {
+				onlineUsers = append(onlineUsers, &user)
+			}
+		}
+	}
+	return onlineUsers
 }
