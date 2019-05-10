@@ -43,6 +43,9 @@ type LoginCmd struct {
 	UserAgent string `json:"userAgent"`
 	Domain    string `json:"domain"`
 	Token     string `json:"token"`
+	Username  string `json:"username"`
+	Mobile    string `json:"mobile"`
+	Email     string `json:"email"`
 }
 
 // LoginRes ...

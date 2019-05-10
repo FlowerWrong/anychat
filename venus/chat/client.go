@@ -88,6 +88,11 @@ func (c *Client) logical(message []byte) error {
 		user.FirstLoginAt = time.Now()
 		user.LastActiveAt = time.Now()
 
+		// 可能存在，依赖于用户设置
+		user.Username = loginCmd.Username
+		user.Email = loginCmd.Email
+		user.Mobile = loginCmd.Mobile
+
 		affected, err := db.Engine().Insert(user)
 		if err != nil {
 			return err
@@ -319,6 +324,8 @@ func (c *Client) subPump() {
 	<-c.startSub
 	defer func() {
 		_ = c.conn.Close()
+		close(c.startSub)
+		close(c.stop)
 	}()
 
 	subj := "topic/" + strconv.FormatInt(c.userID, 10)
