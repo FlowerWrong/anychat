@@ -30,7 +30,7 @@ ActiveRecord::Schema.define(version: 2019_04_29_083226) do
     t.index ["domains"], name: "index_apps_on_domains", using: :gin
   end
 
-  create_table "chat_messages", comment: "聊天消息", force: :cascade do |t|
+  create_table "chat_messages", comment: "私聊消息", force: :cascade do |t|
     t.string "uuid", comment: "uuid"
     t.integer "from", comment: "发送人"
     t.integer "to", comment: "接收人"

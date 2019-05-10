@@ -8,4 +8,9 @@ bundle exec rails generate model User username password mobile email avatar note
 bundle exec rails generate model ChatMessage from:integer to:integer content:text read_at:datetime deleted_at:datetime
 
 bundle exec rails g model App uuid name company_id:integer intro:text domains deleted_at:datetime
+
+bundle exec rails g model Room uuid name intro:text logo deleted_at:datetime
+bundle exec rails g model RoomUser uuid user_id:integer room_id:integer nickname deleted_at:datetime
+bundle exec rails generate model RoomMessage uuid from:integer room_id:integer content:text deleted_at:datetime
+bundle exec rails generate model UserRoomMessage uuid user_id:integer room_message_id:integer read_at:datetime deleted_at:datetime
 ```
