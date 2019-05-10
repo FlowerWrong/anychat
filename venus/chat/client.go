@@ -49,8 +49,7 @@ type Client struct {
 	// The websocket connection.
 	conn *websocket.Conn
 
-	stop     chan time.Time
-	startSub chan time.Time
+	stop chan time.Time
 
 	// Buffered channel of outbound messages.
 	send chan []byte
@@ -135,7 +134,7 @@ func (c *Client) logical(message []byte) error {
 		}
 
 		c.send <- data
-		c.startSub <- time.Now()
+		go c.subPump()
 	case WS_LOGOUT:
 		// TODO
 	case WS_RE_CONN:
@@ -321,11 +320,9 @@ func (c *Client) writePump() {
 }
 
 func (c *Client) subPump() {
-	<-c.startSub
 	defer func() {
-		_ = c.conn.Close()
-		close(c.startSub)
 		close(c.stop)
+		_ = c.conn.Close()
 	}()
 
 	subj := "topic/" + strconv.FormatInt(c.userID, 10)
@@ -352,11 +349,10 @@ func HandleWs(hub *Hub, w http.ResponseWriter, r *http.Request) {
 	}
 	realIP := utils.RealIP(r)
 
-	client := &Client{hub: hub, conn: conn, startSub: make(chan time.Time), stop: make(chan time.Time), send: make(chan []byte, maxMessageSize), realIP: realIP}
+	client := &Client{hub: hub, conn: conn, stop: make(chan time.Time), send: make(chan []byte, maxMessageSize), realIP: realIP}
 	client.hub.register <- client
 
 	// Allow collection of memory referenced by the caller by doing all work in new goroutines.
 	go client.writePump()
 	go client.readPump()
-	go client.subPump()
 }
