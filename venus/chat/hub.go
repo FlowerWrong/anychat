@@ -56,7 +56,7 @@ func (h *Hub) Run() {
 	}
 }
 
-// FindClientByUserID ...
+// FindClientByUserID find one client by userID
 func (h *Hub) FindClientByUserID(userID int64) (*Client, error) {
 	for client := range h.clients {
 		if client.userID == userID {
@@ -66,7 +66,7 @@ func (h *Hub) FindClientByUserID(userID int64) (*Client, error) {
 	return nil, errors.New("record not found")
 }
 
-// FindOnlineUserList ...
+// FindOnlineUserList from give user list
 func (h *Hub) FindOnlineUserList(users *[]models.User) (onlineUsers []*models.User) {
 	for client := range h.clients {
 		for _, user := range *users {

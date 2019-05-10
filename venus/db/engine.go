@@ -38,11 +38,13 @@ func initEngine() error {
 
 // Engine return the uniq db engine
 func Engine() *xorm.Engine {
-	dbOnce.Do(func() {
-		err := initEngine()
-		if err != nil {
-			panic(err)
-		}
-	})
+	if dbEngine == nil {
+		dbOnce.Do(func() {
+			err := initEngine()
+			if err != nil {
+				panic(err)
+			}
+		})
+	}
 	return dbEngine
 }

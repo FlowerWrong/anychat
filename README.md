@@ -10,12 +10,19 @@
 * [uber zap](https://github.com/uber-go/zap) + [lumberjack](https://github.com/natefinch/lumberjack)
 * [yuin/gopher-lua](https://github.com/yuin/gopher-lua)
 * [blevesearch/bleve](https://github.com/blevesearch/bleve)
+* [xorm](https://github.com/xormplus/xorm)
+* [viper](https://github.com/spf13/viper)
+* [ant.design pro](http://pro.ant.design/index-cn/)
+* [gin](https://github.com/gin-gonic/gin)
+* [nsq](https://github.com/nsqio/nsq)
+* [jaeger](https://github.com/jaegertracing/jaeger)
 
 ## 竞品
 
 * [udesk](http://www.udesk.cn/)
 * [美洽](https://meiqia.com/)
 * [live.chat](https://www.livechatinc.com/)
+* [tawk.to](https://www.tawk.to/)
 
 ## Features
 
@@ -24,3 +31,7 @@
 * iOS/android SDK
 * react SDK
 * react native SDK
+
+## Design
+
+用户列表统一存储在redis，key为user.UUID，value为node host:port，即所在服务器实例，走rpc

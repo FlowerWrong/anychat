@@ -8,7 +8,7 @@ const (
 	WS_SINGLE_CHAT
 	WS_GEO
 	WS_LAN_IP
-	WS_RE_CONN
+	WS_RE_CONN // 掉线重连
 )
 
 type Base struct {
@@ -16,11 +16,13 @@ type Base struct {
 	Ack string `json:"ack"`
 }
 
+// Req is common use request body
 type Req struct {
 	Base
 	Body json.RawMessage `json:"body"`
 }
 
+// Res is common use response body
 type Res struct {
 	Base
 	Body json.RawMessage `json:"body"`
@@ -37,8 +39,6 @@ type Error struct {
 }
 
 // LoginCmd ...
-// navigator.userAgent
-// local ip https://jsfiddle.net/ourcodeworld/cks0v68q/
 type LoginCmd struct {
 	UserAgent string `json:"userAgent"`
 	Domain    string `json:"domain"`

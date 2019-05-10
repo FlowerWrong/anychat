@@ -10,10 +10,13 @@ import (
 
 var ENV string
 
-const DEVELOPMENT = "development"
-const TEST = "test"
-const PRODUCTION = "production"
+const (
+	DEVELOPMENT = "development"
+	TEST        = "test"
+	PRODUCTION  = "production"
+)
 
+// Setup ...
 func Setup() error {
 	ENV = os.Getenv("APP_ENV")
 	if ENV == "" {
