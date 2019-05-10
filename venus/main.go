@@ -6,30 +6,13 @@ import (
 	"runtime"
 	"time"
 
-	_ "./docs"
 	"github.com/FlowerWrong/new_chat/venus/actions"
 	"github.com/FlowerWrong/new_chat/venus/chat"
 	"github.com/FlowerWrong/new_chat/venus/config"
 	"github.com/FlowerWrong/new_chat/venus/db"
 	"github.com/gin-gonic/gin"
-	ginSwagger "github.com/swaggo/gin-swagger"
-	"github.com/swaggo/gin-swagger/swaggerFiles"
 )
 
-// @title one chat Swagger API
-// @version 1.0
-// @description one chat api server with websocket
-// @termsOfService http://swagger.io/terms/
-
-// @contact.name API Support
-// @contact.url http://www.swagger.io/support
-// @contact.email support@swagger.io
-
-// @license.name Apache 2.0
-// @license.url http://www.apache.org/licenses/LICENSE-2.0.html
-
-// @host localhost:8080
-// @BasePath /api/v1
 func main() {
 	rand.Seed(time.Now().UnixNano())
 	log.SetFlags(log.LstdFlags | log.Lshortfile)
@@ -61,12 +44,6 @@ func main() {
 	go hub.Run()
 
 	app := gin.Default()
-
-	// swagger middleware
-	swaggerConfig := &ginSwagger.Config{
-		URL: "http://localhost:8080/swagger/doc.json", // The url pointing to API definition
-	}
-	app.GET("/swagger/*any", ginSwagger.CustomWrapHandler(swaggerConfig, swaggerFiles.Handler))
 
 	app.LoadHTMLGlob("views/*")
 	app.GET("/", actions.HomeHandler)
