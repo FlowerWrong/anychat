@@ -14,7 +14,7 @@
 * [viper](https://github.com/spf13/viper)
 * [ant.design pro](http://pro.ant.design/index-cn/)
 * [gin](https://github.com/gin-gonic/gin)
-* [nsq](https://github.com/nsqio/nsq)
+* [nats](https://nats.io/documentation/)
 * [jaeger](https://github.com/jaegertracing/jaeger)
 
 ## 竞品
