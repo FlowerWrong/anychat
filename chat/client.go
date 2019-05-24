@@ -45,8 +45,9 @@ type Client struct {
 	closed    bool
 	connected bool
 
-	realIP string
-	userID int64
+	realIP   string
+	userID   int64
+	userUUID string
 }
 
 func (c *Client) logical(message []byte) error {

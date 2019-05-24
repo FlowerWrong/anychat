@@ -44,15 +44,12 @@ type LoginCmd struct {
 	UserAgent string `json:"userAgent"`
 	Domain    string `json:"domain"`
 	Token     string `json:"token"`
-	Username  string `json:"username"`
-	Mobile    string `json:"mobile"`
-	Email     string `json:"email"`
 }
 
 // LoginRes ...
 type LoginRes struct {
+	Base
 	UserID string `json:"userID"`
-	ChatID string `json:"chatID"`
 }
 
 // SingleChatCmd ...
@@ -64,8 +61,7 @@ type SingleChatCmd struct {
 
 // SingleChatRes ...
 type SingleChatRes struct {
-	Cmd  int32  `json:"cmd"`
-	Ack  string `json:"ack"`
+	Base
 	From string `json:"from"`
 	To   string `json:"to"`
 	Msg  string `json:"msg"`

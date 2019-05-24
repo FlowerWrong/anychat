@@ -54,7 +54,7 @@ func PerformSingleChat(req Req, c *Client) (err error) {
 		// email and sms notification TODO
 	} else {
 		// online
-		singleChatRes := SingleChatRes{UUID: chatMsg.Uuid, Cmd: req.Cmd, Ack: req.Ack, From: singleChatCmd.From, To: singleChatCmd.To, Msg: singleChatCmd.Msg}
+		singleChatRes := SingleChatRes{Base: Base{Cmd: req.Cmd, Ack: req.Ack}, UUID: chatMsg.Uuid, From: singleChatCmd.From, To: singleChatCmd.To, Msg: singleChatCmd.Msg}
 		data, err := json.Marshal(singleChatRes)
 		if err != nil {
 			log.Println(err)

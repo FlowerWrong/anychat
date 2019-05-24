@@ -7,7 +7,9 @@ import (
 
 	"github.com/FlowerWrong/anychat/db"
 	"github.com/FlowerWrong/anychat/models"
-	"github.com/FlowerWrong/util"
+	"github.com/FlowerWrong/anychat/services"
+	"github.com/FlowerWrong/anychat/utils"
+
 	"github.com/mssola/user_agent"
 )
 
@@ -19,22 +21,27 @@ func PerformLogin(req Req, c *Client) (err error) {
 		return err
 	}
 	ua := user_agent.New(loginCmd.UserAgent)
-	user := new(models.User)
+
+	claims, err := utils.ParseToken(loginCmd.Token)
+	if err != nil {
+		return err
+	}
+
+	user, err := services.FindUserByUuid(claims.UUID)
+	if err != nil {
+		return err
+	}
+
+	updateUser := new(models.User)
 	browserName, browserVersion := ua.Browser()
-	user.Browser = browserName + ":" + browserVersion
-	user.Os = ua.OS()
-	user.Ip = c.realIP
+	updateUser.Browser = browserName + ":" + browserVersion
+	updateUser.Os = ua.OS()
+	updateUser.Ip = c.realIP
 
-	user.Uuid = util.UUID()
-	user.FirstLoginAt = time.Now()
-	user.LastActiveAt = time.Now()
+	updateUser.FirstLoginAt = time.Now()
+	updateUser.LastActiveAt = time.Now()
 
-	// 可能存在，依赖于用户设置
-	user.Username = loginCmd.Username
-	user.Email = loginCmd.Email
-	user.Mobile = loginCmd.Mobile
-
-	affected, err := db.Engine().Insert(user)
+	affected, err := db.Engine().Id(user.Id).Update(updateUser)
 	if err != nil {
 		return err
 	}
@@ -42,8 +49,9 @@ func PerformLogin(req Req, c *Client) (err error) {
 		return errors.New("affected not 1")
 	}
 	c.userID = user.Id // 设置client user id
+	c.userUUID = user.Uuid
 
-	loginRes := LoginRes{UserID: user.Uuid, ChatID: ""}
+	loginRes := LoginRes{Base: Base{Ack: req.Ack, Cmd: req.Cmd}, UserID: user.Uuid}
 	data, err := json.Marshal(loginRes)
 	if err != nil {
 		return err

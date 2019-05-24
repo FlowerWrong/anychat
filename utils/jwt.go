@@ -1,6 +1,8 @@
 package utils
 
 import (
+	"time"
+
 	"github.com/FlowerWrong/anychat/models"
 	jwt "github.com/dgrijalva/jwt-go"
 	"github.com/spf13/viper"
@@ -20,12 +22,13 @@ type CustomJWTClaims struct {
 func GenerateToken(user *models.User) (string, error) {
 	jwtSigningKey := []byte(viper.GetString("jwt_key"))
 
+	expirationTime := time.Now().Add(7 * 24 * time.Hour)
 	claims := CustomJWTClaims{
 		user.Username,
 		user.Id,
 		user.Uuid,
 		jwt.StandardClaims{
-			ExpiresAt: 15000,
+			ExpiresAt: expirationTime.Unix(),
 			Issuer:    "test",
 		},
 	}
@@ -36,8 +39,9 @@ func GenerateToken(user *models.User) (string, error) {
 
 // ParseToken ...
 func ParseToken(tokenStr string) (*CustomJWTClaims, error) {
+	jwtSigningKey := []byte(viper.GetString("jwt_key"))
 	token, err := jwt.ParseWithClaims(tokenStr, &CustomJWTClaims{}, func(token *jwt.Token) (interface{}, error) {
-		return []byte("AllYourBase"), nil
+		return jwtSigningKey, nil
 	})
 
 	if claims, ok := token.Claims.(*CustomJWTClaims); ok && token.Valid {
