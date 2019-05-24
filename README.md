@@ -10,6 +10,7 @@
 * [go-micro](https://micro.mu/)
 * [opencensus](https://github.com/census-instrumentation/opencensus-go): A stats collection and distributed tracing framework
 * [uber zap](https://github.com/uber-go/zap) + [lumberjack](https://github.com/natefinch/lumberjack)
+* [apex/log](https://github.com/apex/log)
 * [yuin/gopher-lua](https://github.com/yuin/gopher-lua)
 * [blevesearch/bleve](https://github.com/blevesearch/bleve)
 * [xorm](https://github.com/xormplus/xorm)
