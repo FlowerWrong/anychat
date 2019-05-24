@@ -15,17 +15,11 @@ class CreateUsers < ActiveRecord::Migration[6.0]
       t.string :browser, comment: '浏览器'
       t.decimal :latitude, precision: 20, scale: 17, comment: '纬度'
       t.decimal :longitude, precision: 20, scale: 17, comment: '经度'
-      t.integer :company_id, comment: '公司'
-      t.integer :app_id, comment: '应用'
-      t.string :role, comment: '角色'
       t.datetime :first_login_at, comment: '第一次登录时间'
       t.datetime :last_active_at, comment: '最后一次活跃时间'
       t.datetime :deleted_at, comment: '删除时间'
 
       t.timestamps
     end
-
-    add_index :users, :company_id
-    add_index :users, :app_id
   end
 end

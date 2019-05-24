@@ -50,7 +50,7 @@ func main() {
 
 	v1 := app.Group("/api/v1")
 	{
-		v1.GET("/ping", actions.PingHandler)
+		v1.GET("/health", actions.HealthHandler)
 		v1.POST("/upload", actions.UploadHandler)
 	}
 	app.GET("/ws", func(c *gin.Context) {
