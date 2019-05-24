@@ -3,8 +3,8 @@ package services
 import (
 	"errors"
 
-	"github.com/FlowerWrong/new_chat/venus/db"
-	"github.com/FlowerWrong/new_chat/venus/models"
+	"github.com/FlowerWrong/anychat/db"
+	"github.com/FlowerWrong/anychat/models"
 )
 
 func FindUserByUuid(uuid string) (*models.User, error) {

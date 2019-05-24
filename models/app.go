@@ -3,7 +3,7 @@ package models
 import (
 	"time"
 
-	"github.com/FlowerWrong/new_chat/venus/models/ext"
+	"github.com/FlowerWrong/anychat/models/ext"
 )
 
 type App struct {

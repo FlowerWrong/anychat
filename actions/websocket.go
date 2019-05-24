@@ -3,7 +3,7 @@ package actions
 import (
 	"net/http"
 
-	"github.com/FlowerWrong/new_chat/venus/chat"
+	"github.com/FlowerWrong/anychat/chat"
 )
 
 // WsHandler ...

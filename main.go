@@ -6,10 +6,10 @@ import (
 	"runtime"
 	"time"
 
-	"github.com/FlowerWrong/new_chat/venus/actions"
-	"github.com/FlowerWrong/new_chat/venus/chat"
-	"github.com/FlowerWrong/new_chat/venus/config"
-	"github.com/FlowerWrong/new_chat/venus/db"
+	"github.com/FlowerWrong/anychat/actions"
+	"github.com/FlowerWrong/anychat/chat"
+	"github.com/FlowerWrong/anychat/config"
+	"github.com/FlowerWrong/anychat/db"
 	"github.com/gin-gonic/gin"
 )
 

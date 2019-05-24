@@ -1,5 +1,7 @@
 # new chat
 
+* [chat references](https://github.com/FlowerWrong/erlim/blob/master/api/chat.md#chat-api)
+
 ## 技术栈
 
 * [postgresql 11.2+](https://www.postgresql.org/)
