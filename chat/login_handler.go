@@ -3,8 +3,6 @@ package chat
 import (
 	"encoding/json"
 	"errors"
-	"log"
-	"math/rand"
 	"time"
 
 	"github.com/FlowerWrong/anychat/db"
@@ -28,8 +26,6 @@ func PerformLogin(req Req, c *Client) (err error) {
 	user.Ip = c.realIP
 
 	user.Uuid = util.UUID()
-	user.CompanyId = c.companyID
-	user.Role = "customer"
 	user.FirstLoginAt = time.Now()
 	user.LastActiveAt = time.Now()
 
@@ -47,39 +43,12 @@ func PerformLogin(req Req, c *Client) (err error) {
 	}
 	c.userID = user.Id // 设置client user id
 
-	app := new(models.App)
-	_, err = db.Engine().Where("token = ?", loginCmd.Token).Get(app)
-	if err != nil {
-		return err
-	}
-	c.companyID = app.CompanyId
-	c.appID = app.Id
-
-	// 选择对象
-	users := make([]models.User, 0)
-	err = db.Engine().Where("role = 'member' and company_id = ? and app_id = ?", c.companyID, c.appID).Find(&users) // TODO online
-	if err != nil {
-		return err
-	}
-	if len(users) == 0 {
-		return errors.New("no company users find")
-	}
-	onlineUsers := c.hub.FindOnlineUserList(&users)
-	var selectedUser models.User
-	if len(onlineUsers) == 0 {
-		log.Println("no online users find")
-		selectedUser = users[rand.Intn(len(users))]
-	} else {
-		selectedUser = *onlineUsers[rand.Intn(len(onlineUsers))]
-	}
-
-	loginRes := LoginRes{UserID: user.Uuid, ChatID: selectedUser.Uuid}
+	loginRes := LoginRes{UserID: user.Uuid, ChatID: ""}
 	data, err := json.Marshal(loginRes)
 	if err != nil {
 		return err
 	}
 
 	c.send <- data
-	go c.subPump()
 	return nil
 }

@@ -16,7 +16,7 @@ var (
 
 func initEngine() error {
 	var err error
-	dbEngine, err = xorm.NewPostgreSQL(viper.Get("db_url").(string))
+	dbEngine, err = xorm.NewPostgreSQL(viper.GetString("db_url"))
 	if err != nil {
 		return err
 	}

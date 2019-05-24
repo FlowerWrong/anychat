@@ -8,12 +8,16 @@ import (
 	"github.com/spf13/viper"
 )
 
+// ENV is app env
 var ENV string
 
 const (
+	// DEVELOPMENT env
 	DEVELOPMENT = "development"
-	TEST        = "test"
-	PRODUCTION  = "production"
+	// TEST env
+	TEST = "test"
+	// PRODUCTION env
+	PRODUCTION = "production"
 )
 
 // Setup ...

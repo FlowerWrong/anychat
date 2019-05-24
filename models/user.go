@@ -20,9 +20,6 @@ type User struct {
 	Browser        string    `xorm:"VARCHAR"`
 	Latitude       float64   `xorm:"DOUBLE"`
 	Longitude      float64   `xorm:"DOUBLE"`
-	CompanyId      int64     `xorm:"index INTEGER"`
-	AppId          int64     `xorm:"index INTEGER"`
-	Role           string    `xorm:"VARCHAR"`
 	FirstLoginAt   time.Time `xorm:"DATETIME"`
 	LastActiveAt   time.Time `xorm:"DATETIME"`
 	DeletedAt      time.Time `xorm:"deleted"`

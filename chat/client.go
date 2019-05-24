@@ -4,14 +4,10 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
-	"os"
-	"strconv"
 	"time"
 
-	"github.com/FlowerWrong/anychat/db"
 	"github.com/FlowerWrong/anychat/utils"
 	"github.com/gorilla/websocket"
-	"github.com/nats-io/go-nats"
 )
 
 const (
@@ -43,15 +39,14 @@ type Client struct {
 	// The websocket connection.
 	conn *websocket.Conn
 
-	stop chan time.Time
-
 	// Buffered channel of outbound messages.
 	send chan []byte
 
-	realIP    string
-	companyID int64
-	appID     int64
-	userID    int64
+	closed    bool
+	connected bool
+
+	realIP string
+	userID int64
 }
 
 func (c *Client) logical(message []byte) error {
@@ -99,7 +94,6 @@ func (c *Client) logical(message []byte) error {
 func (c *Client) readPump() {
 	defer func() {
 		c.hub.unregister <- c
-		c.stop <- time.Now()
 		_ = c.conn.Close()
 	}()
 	c.conn.SetReadLimit(maxMessageSize)
@@ -181,27 +175,6 @@ func (c *Client) writePump() {
 	}
 }
 
-func (c *Client) subPump() {
-	defer func() {
-		close(c.stop)
-		_ = c.conn.Close()
-	}()
-
-	subj := "topic/" + strconv.FormatInt(c.userID, 10)
-	db.MQClient().Subscribe(subj, func(msg *nats.Msg) {
-		log.Printf("Received on [%s] Pid[%d]: '%s'", msg.Subject, os.Getpid(), string(msg.Data))
-
-		// 逻辑
-		err := c.logical(msg.Data)
-		if err != nil {
-			log.Println(err)
-			c.stop <- time.Now()
-		}
-	})
-	db.MQClient().Flush()
-	<-c.stop
-}
-
 // HandleWs handles websocket requests from the peer.
 func HandleWs(hub *Hub, w http.ResponseWriter, r *http.Request) {
 	conn, err := upgrader.Upgrade(w, r, nil)
@@ -211,7 +184,7 @@ func HandleWs(hub *Hub, w http.ResponseWriter, r *http.Request) {
 	}
 	realIP := utils.RealIP(r)
 
-	client := &Client{hub: hub, conn: conn, stop: make(chan time.Time), send: make(chan []byte, maxMessageSize), realIP: realIP}
+	client := &Client{hub: hub, conn: conn, send: make(chan []byte, maxMessageSize), realIP: realIP, connected: true, closed: false}
 	client.hub.register <- client
 
 	// Allow collection of memory referenced by the caller by doing all work in new goroutines.
