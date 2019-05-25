@@ -16,7 +16,7 @@ import (
 // PerformLogin ...
 func PerformLogin(req Req, c *Client) (err error) {
 	var loginCmd LoginCmd
-	err = json.Unmarshal(req.Body, &loginCmd)
+	err = json.Unmarshal(req.Data, &loginCmd)
 	if err != nil {
 		return err
 	}
@@ -51,7 +51,11 @@ func PerformLogin(req Req, c *Client) (err error) {
 	c.userID = user.Id // 设置client user id
 	c.userUUID = user.Uuid
 
-	loginRes := LoginRes{Base: Base{Ack: req.Ack, Cmd: req.Cmd}, UserID: user.Uuid}
+	raw, err := utils.RawMsg(LoginRes{UserID: user.Uuid})
+	if err != nil {
+		return err
+	}
+	loginRes := Res{Base: Base{Ack: req.Ack, Cmd: req.Cmd}, Data: raw}
 	data, err := json.Marshal(loginRes)
 	if err != nil {
 		return err

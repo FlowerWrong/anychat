@@ -8,8 +8,12 @@ const (
 	WS_SINGLE_CHAT
 	WS_GEO
 	WS_LAN_IP
-	WS_RE_CONN // 掉线重连
-	WS_PING
+	// WS_RE_CONN 掉线重连
+	WS_RE_CONN
+	// WS_SERVER_PING 服务端发送到客户端的ping消息
+	WS_SERVER_PING
+	// WS_PONG 服务端接收客户端的pong消息
+	WS_PONG
 )
 
 type Base struct {
@@ -20,21 +24,17 @@ type Base struct {
 // Req is common use request body
 type Req struct {
 	Base
-	Body json.RawMessage `json:"body"`
+	Data json.RawMessage `json:"data"`
 }
 
 // Res is common use response body
 type Res struct {
 	Base
-	Body json.RawMessage `json:"body"`
+	Data json.RawMessage `json:"data"`
 }
 
-type Ack struct {
-	Base
-}
-
-type Error struct {
-	Base
+// ErrorRes ...
+type ErrorRes struct {
 	Code int32  `json:"code"`
 	Msg  string `json:"msg"`
 }
@@ -48,7 +48,6 @@ type LoginCmd struct {
 
 // LoginRes ...
 type LoginRes struct {
-	Base
 	UserID string `json:"userID"`
 }
 
@@ -61,7 +60,6 @@ type SingleChatCmd struct {
 
 // SingleChatRes ...
 type SingleChatRes struct {
-	Base
 	From string `json:"from"`
 	To   string `json:"to"`
 	Msg  string `json:"msg"`
@@ -77,4 +75,9 @@ type LanIPCmd struct {
 type GeoCmd struct {
 	Latitude  float64 `json:"latitude"`
 	Longitude float64 `json:"longitude"`
+}
+
+// PingCmd ...
+type PingCmd struct {
+	PingAt interface{} `json:"ping_at"`
 }

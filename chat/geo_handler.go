@@ -10,7 +10,7 @@ import (
 // PerformGeo ...
 func PerformGeo(req Req, c *Client) (err error) {
 	var geoCmd GeoCmd
-	err = json.Unmarshal(req.Body, &geoCmd)
+	err = json.Unmarshal(req.Data, &geoCmd)
 	if err != nil {
 		return err
 	}

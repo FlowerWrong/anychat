@@ -9,13 +9,14 @@ import (
 	"github.com/FlowerWrong/anychat/db"
 	"github.com/FlowerWrong/anychat/models"
 	"github.com/FlowerWrong/anychat/services"
+	"github.com/FlowerWrong/anychat/utils"
 	"github.com/FlowerWrong/util"
 )
 
 // PerformSingleChat ...
 func PerformSingleChat(req Req, c *Client) (err error) {
 	var singleChatCmd SingleChatCmd
-	err = json.Unmarshal(req.Body, &singleChatCmd)
+	err = json.Unmarshal(req.Data, &singleChatCmd)
 	if err != nil {
 		return err
 	}
@@ -54,7 +55,11 @@ func PerformSingleChat(req Req, c *Client) (err error) {
 		// email and sms notification TODO
 	} else {
 		// online
-		singleChatRes := SingleChatRes{Base: Base{Cmd: req.Cmd, Ack: req.Ack}, UUID: chatMsg.Uuid, From: singleChatCmd.From, To: singleChatCmd.To, Msg: singleChatCmd.Msg}
+		raw, err := utils.RawMsg(SingleChatRes{UUID: chatMsg.Uuid, From: singleChatCmd.From, To: singleChatCmd.To, Msg: singleChatCmd.Msg})
+		if err != nil {
+			return err
+		}
+		singleChatRes := Res{Base: Base{Cmd: req.Cmd, Ack: req.Ack}, Data: raw}
 		data, err := json.Marshal(singleChatRes)
 		if err != nil {
 			log.Println(err)

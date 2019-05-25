@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
+	"sync"
 	"time"
 
 	"github.com/FlowerWrong/anychat/utils"
@@ -22,6 +23,8 @@ const (
 
 	// Maximum message size allowed from peer.
 	maxMessageSize = 1024
+
+	appLayerpingInterval = 3 * time.Second
 )
 
 var upgrader = websocket.Upgrader{
@@ -48,6 +51,10 @@ type Client struct {
 	realIP   string
 	userID   int64
 	userUUID string
+
+	pingTimer *time.Timer
+
+	mu sync.Mutex
 }
 
 func (c *Client) logical(message []byte) error {
@@ -78,8 +85,8 @@ func (c *Client) logical(message []byte) error {
 		if err != nil {
 			return err
 		}
-	case WS_PING:
-		err = PerformPing(req, c)
+	case WS_PONG:
+		err = PerformPong(req, c)
 		if err != nil {
 			return err
 		}
@@ -103,6 +110,9 @@ func (c *Client) readPump() {
 		err := c.conn.SetReadDeadline(time.Now().Add(pongWait))
 		return err
 	})
+
+	c.sendPing()
+
 	for {
 		msgType, message, err := c.conn.ReadMessage()
 		if err != nil {

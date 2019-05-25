@@ -26,7 +26,7 @@ const (
 	WS_GEO
 	WS_LAN_IP
 	WS_RE_CONN // 掉线重连
-	WS_PING
+	WS_SERVER_PING
 )
 ```
 
