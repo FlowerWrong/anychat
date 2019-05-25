@@ -80,6 +80,10 @@ func (c *Client) logical(message []byte) error {
 			return err
 		}
 	case WS_LAN_IP:
+		err = PerformLANIP(req, c)
+		if err != nil {
+			return err
+		}
 	case WS_SINGLE_CHAT:
 		err = PerformSingleChat(req, c)
 		if err != nil {

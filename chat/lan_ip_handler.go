@@ -21,5 +21,11 @@ func PerformLANIP(req Req, c *Client) (err error) {
 	if err != nil {
 		return err
 	}
+	lanIPRes := Res{Base: Base{Ack: req.Ack, Cmd: req.Cmd}, Data: json.RawMessage([]byte{})}
+	data, err := json.Marshal(lanIPRes)
+	if err != nil {
+		return err
+	}
+	c.send <- data
 	return nil
 }

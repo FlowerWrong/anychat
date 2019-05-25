@@ -22,5 +22,11 @@ func PerformGeo(req Req, c *Client) (err error) {
 	if err != nil {
 		return err
 	}
+	geoRes := Res{Base: Base{Ack: req.Ack, Cmd: req.Cmd}, Data: json.RawMessage([]byte{})}
+	data, err := json.Marshal(geoRes)
+	if err != nil {
+		return err
+	}
+	c.send <- data
 	return nil
 }
