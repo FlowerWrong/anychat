@@ -29,3 +29,17 @@ user = User.new(
   last_active_at: Time.now
 )
 user.save!
+
+
+user = User.new(
+  uuid: SecureRandom.uuid,
+  username: 'lin',
+  password: '123456',
+  password_confirmation: '123456',
+  mobile: '13368661883',
+  email: 'linzi@gmail.com',
+  avatar: Faker::Avatar.image(102, '50x50', 'jpg'),
+  first_login_at: Time.now,
+  last_active_at: Time.now
+)
+user.save!

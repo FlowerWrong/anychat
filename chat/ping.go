@@ -12,6 +12,9 @@ import (
 // doc https://docs.anycable.io/#/action_cable_protocol
 
 func (c *Client) sendPing() {
+	if c.closed {
+		return
+	}
 	c.send <- newPingMessage()
 	c.addPing()
 }

@@ -30,7 +30,7 @@ func PerformSingleChat(req Req, c *Client) (err error) {
 		return err
 	}
 
-	log.Println(from.Ip, to.Ip)
+	log.Println(from.Id, to.Id)
 
 	chatMsg := new(models.ChatMessage)
 	chatMsg.From = from.Id
@@ -68,8 +68,9 @@ func PerformSingleChat(req Req, c *Client) (err error) {
 		toClient.send <- data
 
 		// 标记已读
-		chatMsg.ReadAt = time.Now()
-		affected, err = db.Engine().Id(chatMsg.Id).Cols("read_at").Update(&chatMsg)
+		updateMsg := new(models.ChatMessage)
+		updateMsg.ReadAt = time.Now()
+		affected, err = db.Engine().Id(chatMsg.Id).Update(updateMsg)
 		if err != nil {
 			return err
 		}

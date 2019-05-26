@@ -37,7 +37,6 @@ func PerformLogin(req Req, c *Client) (err error) {
 	updateUser.Browser = browserName + ":" + browserVersion
 	updateUser.Os = ua.OS()
 	updateUser.Ip = c.realIP
-
 	updateUser.FirstLoginAt = time.Now()
 	updateUser.LastActiveAt = time.Now()
 

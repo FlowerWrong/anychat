@@ -41,14 +41,14 @@ type ErrorRes struct {
 
 // LoginCmd ...
 type LoginCmd struct {
-	UserAgent string `json:"userAgent"`
+	UserAgent string `json:"user_agent"`
 	Domain    string `json:"domain"`
 	Token     string `json:"token"`
 }
 
 // LoginRes ...
 type LoginRes struct {
-	UserID string `json:"userID"`
+	UserID string `json:"user_id"`
 }
 
 // SingleChatCmd ...
@@ -68,7 +68,7 @@ type SingleChatRes struct {
 
 // LanIPCmd 上报 LAN ip
 type LanIPCmd struct {
-	LanIP string `json:"lanIP"`
+	LanIP string `json:"lan_ip"`
 }
 
 // GeoCmd 上报地理位置经纬度
