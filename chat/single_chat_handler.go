@@ -47,7 +47,7 @@ func PerformSingleChat(req Req, c *Client) (err error) {
 	}
 
 	// ack response
-	err = c.sendAckRes(req.Ack)
+	err = c.sendAckRes(req.Ack, WS_SINGLE_CHAT)
 	if err != nil {
 		log.Println(err)
 		return err
@@ -67,17 +67,6 @@ func PerformSingleChat(req Req, c *Client) (err error) {
 			return err
 		}
 		toClient.send <- data
-
-		// 标记已读
-		updateMsg := new(models.ChatMessage)
-		updateMsg.ReadAt = time.Now()
-		affected, err = db.Engine().Id(chatMsg.Id).Update(updateMsg)
-		if err != nil {
-			return err
-		}
-		if affected != 1 {
-			return errors.New("affected not 1")
-		}
 	}
 	return nil
 }

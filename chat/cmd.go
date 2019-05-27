@@ -89,6 +89,11 @@ type PingCmd struct {
 	PingAt interface{} `json:"ping_at"`
 }
 
+// Ack ...
+type Ack struct {
+	Action int32 `json:"action"`
+}
+
 func buildRes(cmd int32, ack string, rawMsg interface{}) ([]byte, error) {
 	raw, err := utils.RawMsg(rawMsg)
 	if err != nil {
