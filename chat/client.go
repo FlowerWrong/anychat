@@ -102,6 +102,11 @@ func (c *Client) logical(message []byte) error {
 			if err != nil {
 				return err
 			}
+		case WS_ROOM_CHAT: // with ack response
+			err = PerformRoomChat(req, c)
+			if err != nil {
+				return err
+			}
 		case WS_ACK: // without ack response
 			err = PerformAck(req, c)
 			if err != nil {

@@ -10,14 +10,15 @@ import (
 const (
 	WS_LOGIN = iota
 	WS_LOGOUT
-	WS_SINGLE_CHAT
-	WS_GEO
-	WS_LAN_IP
 	// WS_RE_CONN 掉线重连
 	WS_RE_CONN
 	// WS_SERVER_PING 服务端发送到客户端的ping消息
 	WS_SERVER_PING
 	WS_ACK
+	WS_GEO
+	WS_LAN_IP
+	WS_SINGLE_CHAT
+	WS_ROOM_CHAT
 )
 
 // Base ...
@@ -92,6 +93,23 @@ type PingCmd struct {
 // Ack ...
 type Ack struct {
 	Action int32 `json:"action"`
+}
+
+// RoomChatCmd ...
+type RoomChatCmd struct {
+	From      string `json:"from"` // user uuid
+	To        string `json:"to"`   // room uuid
+	Msg       string `json:"msg"`
+	CreatedAt int64  `json:"created_at"` // 纳秒
+}
+
+// RoomChatRes ...
+type RoomChatRes struct {
+	From      string `json:"from"` // user uuid
+	To        string `json:"to"`   // room uuid
+	Msg       string `json:"msg"`
+	UUID      string `json:"uuid"`       // user_room_message uuid
+	CreatedAt int64  `json:"created_at"` // 纳秒
 }
 
 func buildRes(cmd int32, ack string, rawMsg interface{}) ([]byte, error) {
