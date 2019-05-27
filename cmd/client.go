@@ -27,6 +27,7 @@ type Session struct {
 	conn   *websocket.Conn
 	send   chan []byte
 	mu     sync.Mutex
+	smap   sync.Map
 	stage  int32
 	userID string
 	token  string
@@ -139,6 +140,12 @@ func main() {
 				// log.Println(m["ping_at"])
 			case chat.WS_SINGLE_CHAT:
 				log.Println(m["from"], "say", m["msg"], "to you")
+			case chat.WS_ACK:
+				log.Println(m["action"].(int32))
+				switch m["action"] {
+				case chat.WS_SINGLE_CHAT:
+					// TODO
+				}
 			}
 		}
 	})

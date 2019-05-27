@@ -51,5 +51,6 @@ func PerformLogin(req Req, c *Client) (err error) {
 	}
 
 	c.send <- data
+	c.updateLogined()
 	return nil
 }

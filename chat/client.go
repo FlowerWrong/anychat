@@ -2,6 +2,7 @@ package chat
 
 import (
 	"encoding/json"
+	"errors"
 	"log"
 	"net/http"
 	"sync"
@@ -55,6 +56,14 @@ type Client struct {
 	pingTimer *time.Timer
 
 	mu sync.Mutex
+
+	logined bool
+}
+
+func (c *Client) updateLogined() {
+	c.mu.Lock()
+	defer c.mu.Unlock()
+	c.logined = !c.logined
 }
 
 func (c *Client) logical(message []byte) error {
@@ -64,35 +73,40 @@ func (c *Client) logical(message []byte) error {
 		return err
 	}
 
-	switch req.Cmd {
-	case WS_LOGIN: // without ack response
+	if req.Cmd == WS_LOGIN {
 		err = PerformLogin(req, c)
 		if err != nil {
 			return err
 		}
-	case WS_LOGOUT: // without ack response
-		// TODO
-	case WS_RE_CONN: // without ack response
-		// 掉线重连 TODO
-	case WS_GEO: // without ack response
-		err = PerformGeo(req, c)
-		if err != nil {
-			return err
+	} else {
+		if !c.logined {
+			return errors.New("401 Unauthorized")
 		}
-	case WS_LAN_IP: // without ack response
-		err = PerformLANIP(req, c)
-		if err != nil {
-			return err
-		}
-	case WS_SINGLE_CHAT: // with ack response
-		err = PerformSingleChat(req, c)
-		if err != nil {
-			return err
-		}
-	case WS_ACK: // without ack response
-		err = PerformAck(req, c)
-		if err != nil {
-			return err
+		switch req.Cmd {
+		case WS_LOGOUT: // without ack response
+			// TODO
+		case WS_RE_CONN: // without ack response
+			// 掉线重连 TODO
+		case WS_GEO: // without ack response
+			err = PerformGeo(req, c)
+			if err != nil {
+				return err
+			}
+		case WS_LAN_IP: // without ack response
+			err = PerformLANIP(req, c)
+			if err != nil {
+				return err
+			}
+		case WS_SINGLE_CHAT: // with ack response
+			err = PerformSingleChat(req, c)
+			if err != nil {
+				return err
+			}
+		case WS_ACK: // without ack response
+			err = PerformAck(req, c)
+			if err != nil {
+				return err
+			}
 		}
 	}
 	return nil
@@ -203,7 +217,7 @@ func HandleWs(hub *Hub, w http.ResponseWriter, r *http.Request) {
 	}
 	realIP := utils.RealIP(r)
 
-	client := &Client{hub: hub, conn: conn, send: make(chan []byte, MaxMessageSize), realIP: realIP, connected: true, closed: false}
+	client := &Client{hub: hub, conn: conn, send: make(chan []byte, MaxMessageSize), realIP: realIP, connected: true, closed: false, logined: false}
 	client.hub.register <- client
 
 	// Allow collection of memory referenced by the caller by doing all work in new goroutines.
