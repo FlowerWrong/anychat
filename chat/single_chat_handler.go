@@ -20,11 +20,11 @@ func PerformSingleChat(req Req, c *Client) (err error) {
 		return err
 	}
 
-	from, err := services.FindUserByUuid(singleChatCmd.From)
+	from, err := services.FindUserByUUID(singleChatCmd.From)
 	if err != nil {
 		return err
 	}
-	to, err := services.FindUserByUuid(singleChatCmd.To)
+	to, err := services.FindUserByUUID(singleChatCmd.To)
 	if err != nil {
 		return err
 	}

@@ -7,8 +7,8 @@ import (
 	"github.com/FlowerWrong/anychat/models"
 )
 
-// FindUserByUuid ...
-func FindUserByUuid(uuid string) (*models.User, error) {
+// FindUserByUUID ...
+func FindUserByUUID(uuid string) (*models.User, error) {
 	var user models.User
 	has, err := db.Engine().Where("uuid = ?", uuid).Get(&user)
 	if err != nil {

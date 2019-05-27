@@ -25,7 +25,7 @@ func PerformLogin(req Req, c *Client) (err error) {
 		return err
 	}
 
-	user, err := services.FindUserByUuid(claims.UUID)
+	user, err := services.FindUserByUUID(claims.UUID)
 	if err != nil {
 		return err
 	}
