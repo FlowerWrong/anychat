@@ -52,6 +52,8 @@ group :development, :test do
   gem 'graphiti_spec_helpers'
 
   gem 'factory_bot_rails'
+
+  gem 'awesome_print'
 end
 
 group :test do

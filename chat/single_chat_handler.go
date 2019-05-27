@@ -9,7 +9,6 @@ import (
 	"github.com/FlowerWrong/anychat/db"
 	"github.com/FlowerWrong/anychat/models"
 	"github.com/FlowerWrong/anychat/services"
-	"github.com/FlowerWrong/anychat/utils"
 	"github.com/FlowerWrong/util"
 )
 
@@ -38,12 +37,20 @@ func PerformSingleChat(req Req, c *Client) (err error) {
 	chatMsg.Uuid = util.UUID()
 	chatMsg.Ack = req.Ack
 	chatMsg.Content = singleChatCmd.Msg
+	chatMsg.CreatedAt = time.Unix(0, singleChatCmd.CreatedAt)
 	affected, err := db.Engine().Insert(chatMsg)
 	if err != nil {
 		return err
 	}
 	if affected != 1 {
 		return errors.New("affected not 1")
+	}
+
+	// ack response
+	err = c.sendAckRes(req.Ack)
+	if err != nil {
+		log.Println(err)
+		return err
 	}
 
 	// check to is online or not
@@ -55,14 +62,8 @@ func PerformSingleChat(req Req, c *Client) (err error) {
 		// email and sms notification TODO
 	} else {
 		// online
-		raw, err := utils.RawMsg(SingleChatRes{UUID: chatMsg.Uuid, From: singleChatCmd.From, To: singleChatCmd.To, Msg: singleChatCmd.Msg})
+		data, err := buildRes(req.Cmd, chatMsg.Uuid, SingleChatRes{UUID: chatMsg.Uuid, From: singleChatCmd.From, To: singleChatCmd.To, Msg: singleChatCmd.Msg, CreatedAt: singleChatCmd.CreatedAt})
 		if err != nil {
-			return err
-		}
-		singleChatRes := Res{Base: Base{Cmd: req.Cmd, Ack: req.Ack}, Data: raw}
-		data, err := json.Marshal(singleChatRes)
-		if err != nil {
-			log.Println(err)
 			return err
 		}
 		toClient.send <- data

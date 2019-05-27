@@ -65,32 +65,32 @@ func (c *Client) logical(message []byte) error {
 	}
 
 	switch req.Cmd {
-	case WS_LOGIN:
+	case WS_LOGIN: // without ack response
 		err = PerformLogin(req, c)
 		if err != nil {
 			return err
 		}
-	case WS_LOGOUT:
+	case WS_LOGOUT: // without ack response
 		// TODO
-	case WS_RE_CONN:
+	case WS_RE_CONN: // without ack response
 		// 掉线重连 TODO
-	case WS_GEO:
+	case WS_GEO: // without ack response
 		err = PerformGeo(req, c)
 		if err != nil {
 			return err
 		}
-	case WS_LAN_IP:
+	case WS_LAN_IP: // without ack response
 		err = PerformLANIP(req, c)
 		if err != nil {
 			return err
 		}
-	case WS_SINGLE_CHAT:
+	case WS_SINGLE_CHAT: // with ack response
 		err = PerformSingleChat(req, c)
 		if err != nil {
 			return err
 		}
-	case WS_PONG:
-		err = PerformPong(req, c)
+	case WS_ACK: // without ack response
+		err = PerformAck(req, c)
 		if err != nil {
 			return err
 		}

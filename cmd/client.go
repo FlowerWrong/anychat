@@ -5,7 +5,6 @@ import (
 	"bytes"
 	"encoding/json"
 	"flag"
-	"fmt"
 	"io/ioutil"
 	"log"
 	"math/rand"
@@ -40,10 +39,9 @@ func (s *Session) updateStage(stage int32) {
 	s.stage = stage
 }
 
-func (s *Session) login(username, password string) {
+func (s *Session) httpLogin(username, password string) error {
 	loginFrom := actions.Login{Username: username, Password: password}
 	postLoginJSON, _ := json.Marshal(loginFrom)
-	log.Println(string(postLoginJSON))
 	loginURL := "http://localhost:8080/api/v1/login"
 
 	loginReq, err := http.NewRequest("POST", loginURL, bytes.NewBuffer(postLoginJSON))
@@ -52,7 +50,8 @@ func (s *Session) login(username, password string) {
 	client := &http.Client{}
 	loginResp, err := client.Do(loginReq)
 	if err != nil {
-		panic(err)
+		log.Println(err)
+		return err
 	}
 	defer loginResp.Body.Close()
 	loginBody, _ := ioutil.ReadAll(loginResp.Body)
@@ -60,9 +59,26 @@ func (s *Session) login(username, password string) {
 	err = json.Unmarshal(loginBody, &m)
 	if err != nil {
 		log.Println(err)
-		return
+		return err
 	}
 	s.token = m["token"].(string)
+	return nil
+}
+
+func (s *Session) sendChatMsg(chatToUUID, msg string) error {
+	raw, err := utils.RawMsg(chat.SingleChatCmd{From: s.userID, To: chatToUUID, Msg: msg, CreatedAt: time.Now().UnixNano()})
+	if err != nil {
+		log.Println(err)
+		return err
+	}
+	chatReq := chat.Req{Base: chat.Base{Ack: "single_chat", Cmd: chat.WS_SINGLE_CHAT}, Data: raw}
+	chatJSON, err := json.Marshal(chatReq)
+	if err != nil {
+		log.Println(err)
+		return err
+	}
+	s.send <- chatJSON
+	return nil
 }
 
 func main() {
@@ -87,7 +103,10 @@ func main() {
 		_ = session.conn.Close()
 	}()
 
-	session.login(*username, *password)
+	err = session.httpLogin(*username, *password)
+	if err != nil {
+		log.Fatal("login:", err)
+	}
 
 	wgw := new(util.WaitGroupWrapper)
 	wgw.Wrap(func() {
@@ -95,7 +114,7 @@ func main() {
 			_, message, err := conn.ReadMessage()
 			if err != nil {
 				log.Println("read:", err)
-				return
+				break
 			}
 
 			var res chat.Res
@@ -109,7 +128,7 @@ func main() {
 			err = json.Unmarshal(res.Data, &m)
 			if err != nil {
 				log.Println(err)
-				return
+				break
 			}
 			switch res.Cmd {
 			case chat.WS_LOGIN:
@@ -130,14 +149,14 @@ func main() {
 			case message, ok := <-session.send:
 				_ = session.conn.SetWriteDeadline(time.Now().Add(chat.WriteWait))
 				if !ok {
-					// The hub closed the channel.
 					_ = session.conn.WriteMessage(websocket.CloseMessage, []byte{})
-					return
+					break
 				}
 
 				w, err := session.conn.NextWriter(websocket.TextMessage)
 				if err != nil {
-					return
+					log.Println(err)
+					break
 				}
 				_, _ = w.Write(message)
 
@@ -148,7 +167,8 @@ func main() {
 				}
 
 				if err := w.Close(); err != nil {
-					return
+					log.Println(err)
+					break
 				}
 			}
 		}
@@ -164,27 +184,22 @@ func main() {
 					Token:     session.token,
 				})
 				if err != nil {
-					log.Panic(err)
+					log.Println(err)
+					break
 				}
-				loginReq := chat.Req{Base: chat.Base{Ack: "single_chat", Cmd: chat.WS_LOGIN}, Data: raw}
+				loginReq := chat.Req{Base: chat.Base{Ack: "login", Cmd: chat.WS_LOGIN}, Data: raw}
 				loginJSON, err := json.Marshal(loginReq)
 				if err != nil {
-					log.Panic(err)
+					log.Println(err)
+					break
 				}
 				session.send <- loginJSON
 				session.updateStage(2)
 			case 3:
-				log.Println(3)
-				raw, err := utils.RawMsg(chat.SingleChatCmd{From: session.userID, To: *chatToUUID, Msg: "Hello"})
+				err = session.sendChatMsg(*chatToUUID, "Hello")
 				if err != nil {
-					log.Panic(err)
+					break
 				}
-				loginRes := chat.Req{Base: chat.Base{Ack: "single_chat", Cmd: chat.WS_SINGLE_CHAT}, Data: raw}
-				chatJSON, err := json.Marshal(loginRes)
-				if err != nil {
-					log.Panic(err)
-				}
-				session.send <- chatJSON
 				session.updateStage(4)
 			case 5:
 			case 7:
@@ -197,15 +212,15 @@ func main() {
 	reader := bufio.NewReader(os.Stdin)
 	wgw.Wrap(func() {
 		for {
-			fmt.Print("-> ")
 			text, _ := reader.ReadString('\n')
 			// convert CRLF to LF
-			text = strings.Replace(text, "\n", "", -1)
+			msg := strings.Replace(text, "\n", "", -1)
+			log.Println(msg)
 
-			if strings.Compare("hi", text) == 0 {
-				fmt.Println("hello, Yourself")
+			err = session.sendChatMsg(*chatToUUID, msg)
+			if err != nil {
+				break
 			}
-			log.Println(text)
 		}
 	})
 

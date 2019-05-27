@@ -50,12 +50,7 @@ func PerformLogin(req Req, c *Client) (err error) {
 	c.userID = user.Id // 设置client user id
 	c.userUUID = user.Uuid
 
-	raw, err := utils.RawMsg(LoginRes{UserID: user.Uuid})
-	if err != nil {
-		return err
-	}
-	loginRes := Res{Base: Base{Ack: req.Ack, Cmd: req.Cmd}, Data: raw}
-	data, err := json.Marshal(loginRes)
+	data, err := buildRes(req.Cmd, req.Ack, LoginRes{UserID: user.Uuid})
 	if err != nil {
 		return err
 	}

@@ -19,6 +19,7 @@
 * [gin](https://github.com/gin-gonic/gin)
 * [nats](https://nats.io/documentation/)
 * [jaeger](https://github.com/jaegertracing/jaeger)
+* [sonyflake](https://github.com/sony/sonyflake): distributed unique ID generator
 
 ## 竞品
 

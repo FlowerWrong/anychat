@@ -1,6 +1,11 @@
 package chat
 
-import "encoding/json"
+import (
+	"encoding/json"
+	"log"
+
+	"github.com/FlowerWrong/anychat/utils"
+)
 
 const (
 	WS_LOGIN = iota
@@ -12,10 +17,10 @@ const (
 	WS_RE_CONN
 	// WS_SERVER_PING 服务端发送到客户端的ping消息
 	WS_SERVER_PING
-	// WS_PONG 服务端接收客户端的pong消息
-	WS_PONG
+	WS_ACK
 )
 
+// Base ...
 type Base struct {
 	Cmd int32  `json:"cmd"`
 	Ack string `json:"ack"`
@@ -53,17 +58,19 @@ type LoginRes struct {
 
 // SingleChatCmd ...
 type SingleChatCmd struct {
-	From string `json:"from"`
-	To   string `json:"to"`
-	Msg  string `json:"msg"`
+	From      string `json:"from"`
+	To        string `json:"to"`
+	Msg       string `json:"msg"`
+	CreatedAt int64  `json:"created_at"` // 纳秒
 }
 
 // SingleChatRes ...
 type SingleChatRes struct {
-	From string `json:"from"`
-	To   string `json:"to"`
-	Msg  string `json:"msg"`
-	UUID string `json:"uuid"`
+	From      string `json:"from"`
+	To        string `json:"to"`
+	Msg       string `json:"msg"`
+	UUID      string `json:"uuid"`
+	CreatedAt int64  `json:"created_at"` // 纳秒
 }
 
 // LanIPCmd 上报 LAN ip
@@ -80,4 +87,18 @@ type GeoCmd struct {
 // PingCmd ...
 type PingCmd struct {
 	PingAt interface{} `json:"ping_at"`
+}
+
+func buildRes(cmd int32, ack string, rawMsg interface{}) ([]byte, error) {
+	raw, err := utils.RawMsg(rawMsg)
+	if err != nil {
+		return nil, err
+	}
+	res := Res{Base: Base{Cmd: cmd, Ack: ack}, Data: raw}
+	data, err := json.Marshal(res)
+	if err != nil {
+		log.Println(err)
+		return nil, err
+	}
+	return data, nil
 }
