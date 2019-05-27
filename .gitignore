@@ -4,3 +4,6 @@ config/settings.test.yml
 config/settings.production.yml
 
 tmp/
+
+.DS_Store
+
