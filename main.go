@@ -53,6 +53,9 @@ func main() {
 		v1.GET("/health", actions.HealthHandler)
 		v1.POST("/login", actions.LoginHandler)
 		v1.POST("/upload", actions.UploadHandler)
+
+		v1.POST("/rooms", actions.CreateRoomHandler)
+		v1.GET("/rooms/:id", actions.ShowRoomHandler)
 	}
 	app.GET("/ws", func(c *gin.Context) {
 		actions.WsHandler(hub, c.Writer, c.Request)

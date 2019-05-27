@@ -11,8 +11,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// Login ...
-type Login struct {
+type loginVM struct {
 	Username string `form:"username" json:"username" xml:"username" binding:"required"`
 	Password string `form:"password" json:"password" xml:"password" binding:"required"`
 }
@@ -20,7 +19,7 @@ type Login struct {
 // LoginHandler ...
 // curl -v -X POST http://localhost:8080/api/v1/login -H 'content-type: application/json' -d '{ "username": "yang", "password": "123456" }'
 func LoginHandler(c *gin.Context) {
-	var login Login
+	var login loginVM
 	if err := c.ShouldBindJSON(&login); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
