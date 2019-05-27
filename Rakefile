@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 task default: %w[clean]
 
 task :clean do
@@ -8,7 +10,7 @@ task :fmt do
   sh 'go fmt ./...'
 end
 
-DB_URL = 'postgres://kingyang:@localhost:5432/venus_chat_development?sslmode=disable'.freeze
+DB_URL = 'postgres://yang:@localhost:5432/hestia_development?sslmode=disable'
 
 namespace :g do
   task :model do

@@ -1,0 +1,2 @@
+class RoomMessage < ApplicationRecord
+end

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_04_29_083226) do
+ActiveRecord::Schema.define(version: 2019_05_27_054549) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -21,6 +21,46 @@ ActiveRecord::Schema.define(version: 2019_04_29_083226) do
     t.integer "to", comment: "接收人"
     t.text "content", comment: "内容"
     t.string "ack", comment: "req ack"
+    t.datetime "read_at", comment: "已读时间"
+    t.datetime "deleted_at", comment: "删除时间"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+  end
+
+  create_table "room_messages", comment: "群消息", force: :cascade do |t|
+    t.string "uuid", comment: "uuid"
+    t.integer "from", comment: "发送人"
+    t.integer "room_id", comment: "群"
+    t.text "content", comment: "内容"
+    t.datetime "deleted_at", comment: "删除时间"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+  end
+
+  create_table "room_users", comment: "群用户", force: :cascade do |t|
+    t.string "uuid", comment: "uuid"
+    t.integer "user_id"
+    t.integer "room_id"
+    t.string "nickname", comment: "群昵称"
+    t.datetime "deleted_at", comment: "删除时间"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+  end
+
+  create_table "rooms", comment: "群", force: :cascade do |t|
+    t.string "uuid", comment: "uuid"
+    t.string "name", comment: "群名称"
+    t.text "intro", comment: "群介绍"
+    t.string "logo", comment: "群logo"
+    t.datetime "deleted_at", comment: "删除时间"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+  end
+
+  create_table "user_room_messages", comment: "群人员消息", force: :cascade do |t|
+    t.string "uuid", comment: "uuid"
+    t.integer "user_id", comment: "群人员"
+    t.integer "room_message_id", comment: "群消息"
     t.datetime "read_at", comment: "已读时间"
     t.datetime "deleted_at", comment: "删除时间"
     t.datetime "created_at", precision: 6, null: false
