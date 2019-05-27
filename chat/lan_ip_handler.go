@@ -3,8 +3,8 @@ package chat
 import (
 	"encoding/json"
 
-	"github.com/FlowerWrong/anychat/db"
 	"github.com/FlowerWrong/anychat/models"
+	"github.com/FlowerWrong/anychat/utils"
 )
 
 // PerformLANIP ...
@@ -17,10 +17,11 @@ func PerformLANIP(req Req, c *Client) (err error) {
 
 	user := new(models.User)
 	user.LanIp = lanIPCmd.LanIP
-	_, err = db.Engine().Id(c.userID).Cols("lan_ip").Update(user)
+	err = utils.UpdateRecord(c.userID, user)
 	if err != nil {
 		return err
 	}
+
 	lanIPRes := Res{Base: Base{Ack: req.Ack, Cmd: req.Cmd}, Data: json.RawMessage([]byte{})}
 	data, err := json.Marshal(lanIPRes)
 	if err != nil {
