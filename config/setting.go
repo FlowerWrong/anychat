@@ -1,15 +1,14 @@
 package config
 
 import (
-	"log"
+	"bufio"
 	"os"
 
-	"github.com/fsnotify/fsnotify"
 	"github.com/spf13/viper"
 )
 
 // ENV is app env
-var ENV string
+var APP_ENV string
 
 const (
 	// DEVELOPMENT env
@@ -21,28 +20,18 @@ const (
 )
 
 // Setup ...
-func Setup() error {
-	ENV = os.Getenv("APP_ENV")
-	if ENV == "" {
-		ENV = DEVELOPMENT
-	}
-	viper.SetConfigName("settings")
-	viper.SetConfigType("yaml")
-	viper.AddConfigPath(".")
-	viper.AddConfigPath("./config")
-	viper.WatchConfig()
-	viper.OnConfigChange(func(e fsnotify.Event) {
-		log.Println("Config file changed:", e.Name)
-	})
-	err := viper.ReadInConfig()
-	if err != nil {
-		return err
+func Setup(file string) error {
+	APP_ENV = os.Getenv("APP_ENV")
+	if APP_ENV == "" {
+		APP_ENV = DEVELOPMENT
 	}
 
-	viper.SetConfigName("settings" + "." + ENV)
-	err = viper.MergeInConfig()
+	f, err := os.Open(file)
 	if err != nil {
 		return err
 	}
+	viper.SetConfigType("yaml")
+	viper.ReadConfig(bufio.NewReader(f))
+
 	return nil
 }

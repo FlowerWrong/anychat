@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"log"
 	"math/rand"
 	"runtime"
@@ -18,11 +19,14 @@ func main() {
 	log.SetFlags(log.LstdFlags | log.Lshortfile)
 	runtime.GOMAXPROCS(runtime.NumCPU())
 
-	err := config.Setup()
+	configFile := flag.String("config", "./config/settings.yml", "config file path")
+	flag.Parse()
+
+	err := config.Setup(*configFile)
 	if err != nil {
 		log.Fatal(err)
 	}
-	log.Println("Server launch in", config.ENV)
+	log.Println("Server launch in", config.APP_ENV)
 
 	dbVersion, err := db.Engine().SqlTemplateClient("version.tpl").Query().List()
 	if err != nil {

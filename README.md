@@ -26,5 +26,7 @@
 
 ## TODO
 
+* [ ] cluster
 * [ ] pub/sub based on redis
 * [ ] grpc
+* [ ] session reconnectable
