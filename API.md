@@ -12,21 +12,24 @@
 {
     "cmd": "xxx",
     "ack": "uuid",
-    "body: "xxx_cmd data"
+    "data: "xxx_cmd data"
 }
 ```
 
-## cmd
+## cmds
 
 ```golang
 const (
-	WS_LOGIN = iota
-	WS_LOGOUT
-	WS_SINGLE_CHAT
-	WS_GEO
-	WS_LAN_IP
-	WS_RE_CONN // 掉线重连
-	WS_SERVER_PING
+	TypeWelcome    = "welcome"
+	TypeLogin      = "login"
+	TypeDisconnect = "disconnect"
+	TypeReConn     = "re_conn"
+	TypePing       = "ping"
+	TypeAck        = "ack"
+	TypeGeo        = "geo"
+	TypeLanIP      = "lan_ip"
+	TypeSingleChat = "single_chat"
+	TypeRoomChat   = "room_chat"
 )
 ```
 
