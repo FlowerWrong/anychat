@@ -13,28 +13,12 @@
 * [apex/log](https://github.com/apex/log)
 * [yuin/gopher-lua](https://github.com/yuin/gopher-lua)
 * [blevesearch/bleve](https://github.com/blevesearch/bleve)
-* [xorm](https://github.com/xormplus/xorm)
+* [xormplus](https://github.com/xormplus/xorm)
 * [viper](https://github.com/spf13/viper)
-* [ant.design pro](http://pro.ant.design/index-cn/)
 * [gin](https://github.com/gin-gonic/gin)
 * [nats](https://nats.io/documentation/)
 * [jaeger](https://github.com/jaegertracing/jaeger)
 * [sonyflake](https://github.com/sony/sonyflake): distributed unique ID generator
-
-## 竞品
-
-* [udesk](http://www.udesk.cn/)
-* [美洽](https://meiqia.com/)
-* [live.chat](https://www.livechatinc.com/)
-* [tawk.to](https://www.tawk.to/)
-
-## Features
-
-* 自定义界面
-* js SDK
-* iOS/android SDK
-* react SDK
-* react native SDK
 
 ## Design
 
