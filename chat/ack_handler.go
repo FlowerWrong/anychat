@@ -17,7 +17,7 @@ func PerformAck(req Req, c *Client) (err error) {
 		return err
 	}
 	switch ack.Action {
-	case WS_SINGLE_CHAT:
+	case TypeSingleChat:
 		uuid := req.Ack
 		cm, err := services.FindChatMessageByUUID(uuid)
 		if err != nil {

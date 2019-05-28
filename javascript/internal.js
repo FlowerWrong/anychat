@@ -1,11 +1,11 @@
 export default {
   message_types: {
-    welcome: 0,
-    disconnect: 2,
-    ping: 4,
-    ack: 11,
-    single_chat: 101,
-    room_chat: 102
+    welcome: "welcome",
+    disconnect: "disconnect",
+    ping: "ping",
+    ack: "ack",
+    single_chat: "single_chat",
+    room_chat: "room_chat"
   },
   default_mount_path: "/anychat",
   protocols: ["anychat-v1-json", "anychat-unsupported"]

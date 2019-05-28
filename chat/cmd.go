@@ -9,24 +9,21 @@ import (
 )
 
 const (
-	WS_WELCOME = 0
-	WS_LOGIN   = 1
-	// WS_LOGOUT tell client to disconnect
-	WS_LOGOUT = 2
-	// WS_RE_CONN 掉线重连
-	WS_RE_CONN = 3
-	// WS_SERVER_PING 服务端发送到客户端的ping消息
-	WS_SERVER_PING = 4
-	WS_ACK         = 11
-	WS_GEO         = 12
-	WS_LAN_IP      = 13
-	WS_SINGLE_CHAT = 101
-	WS_ROOM_CHAT   = 102
+	TypeWelcome    = "welcome"
+	TypeLogin      = "login"
+	TypeDisconnect = "disconnect"
+	TypeReConn     = "re_conn"
+	TypePing       = "ping"
+	TypeAck        = "ack"
+	TypeGeo        = "geo"
+	TypeLanIP      = "lan_ip"
+	TypeSingleChat = "single_chat"
+	TypeRoomChat   = "room_chat"
 )
 
 // Base ...
 type Base struct {
-	Cmd int32  `json:"cmd"`
+	Cmd string `json:"cmd"`
 	Ack string `json:"ack"`
 }
 
@@ -106,7 +103,7 @@ type WelcomeCmd struct {
 
 // Ack ...
 type Ack struct {
-	Action int32 `json:"action"`
+	Action string `json:"action"`
 }
 
 // RoomChatCmd ...
@@ -126,7 +123,7 @@ type RoomChatRes struct {
 	CreatedAt int64  `json:"created_at"` // 纳秒
 }
 
-func buildRes(cmd int32, ack string, rawMsg interface{}) ([]byte, error) {
+func buildRes(cmd, ack string, rawMsg interface{}) ([]byte, error) {
 	raw, err := utils.RawMsg(rawMsg)
 	if err != nil {
 		return nil, err
@@ -141,7 +138,7 @@ func buildRes(cmd int32, ack string, rawMsg interface{}) ([]byte, error) {
 }
 
 func (c *Client) sendDisconnectRes(reason string, reconnect bool) error {
-	data, err := buildRes(WS_LOGOUT, util.UUID(), DisconnectCmd{Reason: reason, Reconnect: reconnect})
+	data, err := buildRes(TypeDisconnect, util.UUID(), DisconnectCmd{Reason: reason, Reconnect: reconnect})
 	if err != nil {
 		return err
 	}
@@ -149,8 +146,8 @@ func (c *Client) sendDisconnectRes(reason string, reconnect bool) error {
 	return nil
 }
 
-func (c *Client) sendAckRes(ack string, action int32) error {
-	data, err := buildRes(WS_ACK, ack, Ack{Action: action})
+func (c *Client) sendAckRes(ack, action string) error {
+	data, err := buildRes(TypeAck, ack, Ack{Action: action})
 	if err != nil {
 		return err
 	}

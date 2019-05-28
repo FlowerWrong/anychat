@@ -19,7 +19,7 @@ func newWelcomeMessage() []byte {
 	if err != nil {
 		panic("Failed to build raw JSON 😲")
 	}
-	welcomeCmd := Res{Base: Base{Ack: util.UUID(), Cmd: WS_WELCOME}, Data: raw}
+	welcomeCmd := Res{Base: Base{Ack: util.UUID(), Cmd: TypeWelcome}, Data: raw}
 	jsonStr, err := json.Marshal(&welcomeCmd)
 	if err != nil {
 		panic("Failed to build ping JSON 😲")

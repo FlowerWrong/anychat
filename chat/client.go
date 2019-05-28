@@ -74,7 +74,7 @@ func (c *Client) logical(message []byte) error {
 		return err
 	}
 
-	if req.Cmd == WS_LOGIN {
+	if req.Cmd == TypeLogin {
 		err = PerformLogin(req, c)
 		if err != nil {
 			return err
@@ -84,29 +84,29 @@ func (c *Client) logical(message []byte) error {
 			return errors.New("401 Unauthorized")
 		}
 		switch req.Cmd {
-		case WS_RE_CONN: // without ack response
+		case TypeReConn: // without ack response
 			// 掉线重连 TODO
-		case WS_GEO: // without ack response
+		case TypeGeo: // without ack response
 			err = PerformGeo(req, c)
 			if err != nil {
 				return err
 			}
-		case WS_LAN_IP: // without ack response
+		case TypeLanIP: // without ack response
 			err = PerformLANIP(req, c)
 			if err != nil {
 				return err
 			}
-		case WS_SINGLE_CHAT: // with ack response
+		case TypeSingleChat: // with ack response
 			err = PerformSingleChat(req, c)
 			if err != nil {
 				return err
 			}
-		case WS_ROOM_CHAT: // with ack response
+		case TypeRoomChat: // with ack response
 			err = PerformRoomChat(req, c)
 			if err != nil {
 				return err
 			}
-		case WS_ACK: // without ack response
+		case TypeAck: // without ack response
 			err = PerformAck(req, c)
 			if err != nil {
 				return err

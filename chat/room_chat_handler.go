@@ -81,7 +81,7 @@ func PerformRoomChat(req Req, c *Client) (err error) {
 	}
 
 	// ack response
-	err = c.sendAckRes(req.Ack, WS_ROOM_CHAT)
+	err = c.sendAckRes(req.Ack, TypeRoomChat)
 	if err != nil {
 		log.Println(err)
 		return err

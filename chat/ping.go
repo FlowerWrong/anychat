@@ -34,7 +34,7 @@ func newPingMessage() []byte {
 	if err != nil {
 		panic("Failed to build raw JSON 😲")
 	}
-	pingCmd := Res{Base: Base{Ack: util.UUID(), Cmd: WS_SERVER_PING}, Data: raw}
+	pingCmd := Res{Base: Base{Ack: util.UUID(), Cmd: TypePing}, Data: raw}
 	jsonStr, err := json.Marshal(&pingCmd)
 	if err != nil {
 		panic("Failed to build ping JSON 😲")

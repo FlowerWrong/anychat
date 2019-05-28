@@ -47,7 +47,7 @@ func PerformSingleChat(req Req, c *Client) (err error) {
 	}
 
 	// ack response
-	err = c.sendAckRes(req.Ack, WS_SINGLE_CHAT)
+	err = c.sendAckRes(req.Ack, TypeSingleChat)
 	if err != nil {
 		log.Println(err)
 		return err

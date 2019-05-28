@@ -15,7 +15,6 @@ import (
 	"sync"
 	"time"
 
-	"github.com/FlowerWrong/anychat/actions"
 	"github.com/FlowerWrong/anychat/chat"
 	"github.com/FlowerWrong/anychat/utils"
 	"github.com/FlowerWrong/util"
@@ -40,8 +39,13 @@ func (s *Session) updateStage(stage int32) {
 	s.stage = stage
 }
 
+type loginVM struct {
+	Username string `form:"username" json:"username" xml:"username" binding:"required"`
+	Password string `form:"password" json:"password" xml:"password" binding:"required"`
+}
+
 func (s *Session) httpLogin(username, password string) error {
-	loginFrom := actions.Login{Username: username, Password: password}
+	loginFrom := loginVM{Username: username, Password: password}
 	postLoginJSON, _ := json.Marshal(loginFrom)
 	loginURL := "http://localhost:8080/api/v1/login"
 
@@ -72,7 +76,7 @@ func (s *Session) sendChatMsg(chatToUUID, msg string) error {
 		log.Println(err)
 		return err
 	}
-	chatReq := chat.Req{Base: chat.Base{Ack: "single_chat", Cmd: chat.WS_SINGLE_CHAT}, Data: raw}
+	chatReq := chat.Req{Base: chat.Base{Ack: "single_chat", Cmd: chat.TypeSingleChat}, Data: raw}
 	chatJSON, err := json.Marshal(chatReq)
 	if err != nil {
 		log.Println(err)
@@ -132,18 +136,18 @@ func main() {
 				break
 			}
 			switch res.Cmd {
-			case chat.WS_LOGIN:
+			case chat.TypeLogin:
 				// log.Println(m["user_id"])
 				session.userID = m["user_id"].(string)
 				session.updateStage(3)
-			case chat.WS_SERVER_PING:
+			case chat.TypePing:
 				// log.Println(m["ping_at"])
-			case chat.WS_SINGLE_CHAT:
+			case chat.TypeSingleChat:
 				log.Println(m["from"], "say", m["msg"], "to you")
-			case chat.WS_ACK:
+			case chat.TypeAck:
 				log.Println(m["action"].(int32))
 				switch m["action"] {
-				case chat.WS_SINGLE_CHAT:
+				case chat.TypeSingleChat:
 					// TODO
 				}
 			}
@@ -194,7 +198,7 @@ func main() {
 					log.Println(err)
 					break
 				}
-				loginReq := chat.Req{Base: chat.Base{Ack: "login", Cmd: chat.WS_LOGIN}, Data: raw}
+				loginReq := chat.Req{Base: chat.Base{Ack: "login", Cmd: chat.TypeLogin}, Data: raw}
 				loginJSON, err := json.Marshal(loginReq)
 				if err != nil {
 					log.Println(err)
