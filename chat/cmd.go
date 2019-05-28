@@ -5,20 +5,23 @@ import (
 	"log"
 
 	"github.com/FlowerWrong/anychat/utils"
+	"github.com/FlowerWrong/util"
 )
 
 const (
-	WS_LOGIN = iota
-	WS_LOGOUT
+	WS_WELCOME = 0
+	WS_LOGIN   = 1
+	// WS_LOGOUT tell client to disconnect
+	WS_LOGOUT = 2
 	// WS_RE_CONN 掉线重连
-	WS_RE_CONN
+	WS_RE_CONN = 3
 	// WS_SERVER_PING 服务端发送到客户端的ping消息
-	WS_SERVER_PING
-	WS_ACK
-	WS_GEO
-	WS_LAN_IP
-	WS_SINGLE_CHAT
-	WS_ROOM_CHAT
+	WS_SERVER_PING = 4
+	WS_ACK         = 11
+	WS_GEO         = 12
+	WS_LAN_IP      = 13
+	WS_SINGLE_CHAT = 101
+	WS_ROOM_CHAT   = 102
 )
 
 // Base ...
@@ -57,6 +60,12 @@ type LoginRes struct {
 	UserID string `json:"user_id"`
 }
 
+// DisconnectCmd ...
+type DisconnectCmd struct {
+	Reason    string `json:"reason"`
+	Reconnect bool   `json:"reconnect"`
+}
+
 // SingleChatCmd ...
 type SingleChatCmd struct {
 	From      string `json:"from"`
@@ -88,6 +97,11 @@ type GeoCmd struct {
 // PingCmd ...
 type PingCmd struct {
 	PingAt interface{} `json:"ping_at"`
+}
+
+// WelcomeCmd ...
+type WelcomeCmd struct {
+	Message string `json:"message"`
 }
 
 // Ack ...
@@ -124,4 +138,22 @@ func buildRes(cmd int32, ack string, rawMsg interface{}) ([]byte, error) {
 		return nil, err
 	}
 	return data, nil
+}
+
+func (c *Client) sendDisconnectRes(reason string, reconnect bool) error {
+	data, err := buildRes(WS_LOGOUT, util.UUID(), DisconnectCmd{Reason: reason, Reconnect: reconnect})
+	if err != nil {
+		return err
+	}
+	c.send <- data
+	return nil
+}
+
+func (c *Client) sendAckRes(ack string, action int32) error {
+	data, err := buildRes(WS_ACK, ack, Ack{Action: action})
+	if err != nil {
+		return err
+	}
+	c.send <- data
+	return nil
 }

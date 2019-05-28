@@ -57,7 +57,7 @@ func main() {
 		v1.POST("/rooms", actions.CreateRoomHandler)
 		v1.GET("/rooms/:id", actions.ShowRoomHandler)
 	}
-	app.GET("/ws", func(c *gin.Context) {
+	app.GET("/anychat", func(c *gin.Context) {
 		actions.WsHandler(hub, c.Writer, c.Request)
 	})
 	err = app.Run(":8080")

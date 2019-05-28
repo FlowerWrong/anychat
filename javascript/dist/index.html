@@ -22,6 +22,9 @@
 
     <script type="text/javascript">
     $(document).ready(function(){
+        anychat.logger.enabled = true
+        consumer = anychat.createConsumer("ws://127.0.0.1:8080/anychat");
+        consumer.ensureActiveConnection();
     });
     </script>
   </body>

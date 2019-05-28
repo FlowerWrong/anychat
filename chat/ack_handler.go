@@ -9,15 +9,6 @@ import (
 	"github.com/FlowerWrong/anychat/utils"
 )
 
-func (c *Client) sendAckRes(ack string, action int32) error {
-	data, err := buildRes(WS_ACK, ack, Ack{Action: action})
-	if err != nil {
-		return err
-	}
-	c.send <- data
-	return nil
-}
-
 // PerformAck ...
 func PerformAck(req Req, c *Client) (err error) {
 	var ack Ack

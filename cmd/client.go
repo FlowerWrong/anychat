@@ -93,7 +93,7 @@ func main() {
 	chatToUUID := flag.String("to", "", "chat to someone's uuid")
 	flag.Parse()
 
-	conn, _, err := websocket.DefaultDialer.Dial("ws://localhost:8080/ws", nil)
+	conn, _, err := websocket.DefaultDialer.Dial("ws://localhost:8080/anychat", nil)
 	if err != nil {
 		log.Fatal("dial:", err)
 	}

@@ -2,10 +2,10 @@
   "name": "anychat",
   "version": "1.0.0",
   "description": "anychat js SDK",
-  "main": "index.js",
+  "private": true,
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "browserify *.js > libs/anychat-sdk.js -t [ babelify --presets [ @babel/preset-env ] ]"
+    "build": "webpack"
   },
   "keywords": [
     "anychat"
@@ -13,13 +13,10 @@
   "author": "yang",
   "license": "ISC",
   "devDependencies": {
-    "@babel/core": "^7.4.5",
-    "@babel/preset-env": "^7.4.5",
-    "babel-preset-es2015": "^6.24.1",
-    "babelify": "^10.0.0",
-    "browserify": "^16.2.3"
-  },
-  "dependencies": {
+    "lodash": "^4.17.11",
+    "webpack": "^4.32.2",
+    "webpack-cli": "^3.3.2",
     "actioncable": "^5.2.3"
-  }
+  },
+  "dependencies": {}
 }

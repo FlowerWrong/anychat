@@ -1,10 +1,12 @@
 export default {
   message_types: {
-    welcome: "welcome",
-    ping: "ping",
-    confirmation: "confirm_subscription",
-    rejection: "reject_subscription"
+    welcome: 0,
+    disconnect: 2,
+    ping: 4,
+    ack: 11,
+    single_chat: 101,
+    room_chat: 102
   },
-  default_mount_path: "/ws",
-  protocols: ["actioncable-v1-json", "actioncable-unsupported"]
+  default_mount_path: "/anychat",
+  protocols: ["anychat-v1-json", "anychat-unsupported"]
 }

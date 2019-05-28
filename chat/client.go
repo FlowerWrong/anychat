@@ -34,6 +34,7 @@ var upgrader = websocket.Upgrader{
 	CheckOrigin: func(r *http.Request) bool {
 		return true
 	},
+	Subprotocols: []string{"anychat-v1-json"},
 }
 
 // Client is a middleman between the websocket connection and the hub.
@@ -83,8 +84,6 @@ func (c *Client) logical(message []byte) error {
 			return errors.New("401 Unauthorized")
 		}
 		switch req.Cmd {
-		case WS_LOGOUT: // without ack response
-			// TODO
 		case WS_RE_CONN: // without ack response
 			// 掉线重连 TODO
 		case WS_GEO: // without ack response
@@ -154,6 +153,7 @@ func (c *Client) readPump() {
 			err = c.logical(message)
 			if err != nil {
 				log.Println(err)
+				c.sendDisconnectRes(err.Error(), false)
 				break
 			}
 		case websocket.BinaryMessage:
@@ -224,6 +224,7 @@ func HandleWs(hub *Hub, w http.ResponseWriter, r *http.Request) {
 
 	client := &Client{hub: hub, conn: conn, send: make(chan []byte, MaxMessageSize), realIP: realIP, connected: true, closed: false, logined: false}
 	client.hub.register <- client
+	client.sendWelcome()
 
 	// Allow collection of memory referenced by the caller by doing all work in new goroutines.
 	go client.writePump()

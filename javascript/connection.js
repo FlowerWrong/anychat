@@ -120,22 +120,24 @@ Connection.reopenDelay = 500
 Connection.prototype.events = {
   message(event) {
     if (!this.isProtocolSupported()) { return }
-    const {identifier, message, reason, reconnect, type} = JSON.parse(event.data)
-    switch (type) {
+    logger.log(event.data)
+    const {cmd, ack, data} = JSON.parse(event.data)
+    switch (cmd) {
       case message_types.welcome:
-        this.monitor.recordConnect()
-        return this.subscriptions.reload()
+        return this.monitor.recordConnect()
       case message_types.disconnect:
-        logger.log(`Disconnecting. Reason: ${reason}`)
-        return this.close({allowReconnect: reconnect})
+        logger.log(`Disconnecting. Reason: ${data.reason}`)
+        return this.close({allowReconnect: data.reconnect})
       case message_types.ping:
         return this.monitor.recordPing()
-      case message_types.confirmation:
-        return this.subscriptions.notify(identifier, "connected")
-      case message_types.rejection:
-        return this.subscriptions.reject(identifier)
+      case message_types.ack:
+        return
+      case message_types.single_chat:
+        return
+      case message_types.room_chat:
+        return
       default:
-        return this.subscriptions.notify(identifier, "received", message)
+        return
     }
   },
 
@@ -153,7 +155,6 @@ Connection.prototype.events = {
     if (this.disconnected) { return }
     this.disconnected = true
     this.monitor.recordDisconnect()
-    return this.subscriptions.notifyAll("disconnected", {willAttemptReconnect: this.monitor.isRunning()})
   },
 
   error() {
