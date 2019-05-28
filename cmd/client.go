@@ -102,6 +102,22 @@ func (s *Session) sendRoomChatMsg(chatToRoomUUID, msg string) error {
 	return nil
 }
 
+func (s *Session) sendAckRes(ack, action string) error {
+	raw, err := utils.RawMsg(chat.Ack{Action: action})
+	if err != nil {
+		log.Println(err)
+		return err
+	}
+	req := chat.Req{Base: chat.Base{Ack: ack, Cmd: chat.TypeAck}, Data: raw}
+	data, err := json.Marshal(req)
+	if err != nil {
+		log.Println(err)
+		return err
+	}
+	s.send <- data
+	return nil
+}
+
 func main() {
 	rand.Seed(time.Now().UnixNano())
 	log.SetFlags(log.LstdFlags | log.Lshortfile)
@@ -160,12 +176,18 @@ func main() {
 			case chat.TypePing:
 				// log.Println(m["ping_at"])
 			case chat.TypeSingleChat:
-				log.Println(m["from"], "say", m["msg"], "to you")
+				log.Println("chat", m["from"], "say", m["msg"], "to you")
+				session.sendAckRes(res.Ack, chat.TypeSingleChat)
+			case chat.TypeRoomChat:
+				log.Println("room chat", m["from"], "say", m["msg"], "to you")
+				session.sendAckRes(res.Ack, chat.TypeRoomChat)
 			case chat.TypeAck:
 				log.Println(m["action"].(string))
 				switch m["action"] {
 				case chat.TypeSingleChat:
-					// TODO
+					log.Println("single chat ack")
+				case chat.TypeRoomChat:
+					log.Println("root chat ack")
 				}
 			}
 		}

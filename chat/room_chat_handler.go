@@ -69,7 +69,7 @@ func PerformRoomChat(req Req, c *Client) (err error) {
 				// email and sms notification TODO
 			} else {
 				// online
-				data, err := buildRes(req.Cmd, urm.Uuid, RoomChatRes{UUID: chatMsg.Uuid, From: roomChatCmd.From, To: roomChatCmd.To, Msg: roomChatCmd.Msg, CreatedAt: roomChatCmd.CreatedAt})
+				data, err := buildRes(req.Cmd, urm.Uuid, RoomChatRes{UUID: urm.Uuid, From: roomChatCmd.From, To: roomChatCmd.To, Msg: roomChatCmd.Msg, CreatedAt: roomChatCmd.CreatedAt})
 				if err != nil {
 					return err
 				}

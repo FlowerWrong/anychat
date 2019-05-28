@@ -19,3 +19,16 @@ func FindChatMessageByUUID(uuid string) (*models.ChatMessage, error) {
 	}
 	return &cm, nil
 }
+
+// FindUserRoomMessageByUUID ...
+func FindUserRoomMessageByUUID(uuid string) (*models.UserRoomMessage, error) {
+	var urm models.UserRoomMessage
+	has, err := db.Engine().Where("uuid = ?", uuid).Get(&urm)
+	if err != nil {
+		return nil, err
+	}
+	if !has {
+		return nil, errors.New("record not found")
+	}
+	return &urm, nil
+}

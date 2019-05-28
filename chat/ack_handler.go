@@ -31,6 +31,20 @@ func PerformAck(req Req, c *Client) (err error) {
 		if err != nil {
 			return err
 		}
+	case TypeRoomChat:
+		uuid := req.Ack
+		urm, err := services.FindUserRoomMessageByUUID(uuid)
+		if err != nil {
+			return err
+		}
+
+		// 标记已读
+		updateMsg := new(models.UserRoomMessage)
+		updateMsg.ReadAt = time.Now()
+		err = utils.UpdateRecord(urm.Id, updateMsg)
+		if err != nil {
+			return err
+		}
 	}
 	return nil
 }
