@@ -2,13 +2,12 @@ package chat
 
 import (
 	"encoding/json"
-	"errors"
 	"log"
 	"time"
 
-	"github.com/FlowerWrong/anychat/db"
 	"github.com/FlowerWrong/anychat/models"
 	"github.com/FlowerWrong/anychat/services"
+	"github.com/FlowerWrong/anychat/utils"
 	"github.com/FlowerWrong/util"
 )
 
@@ -37,12 +36,9 @@ func PerformRoomChat(req Req, c *Client) (err error) {
 	chatMsg.Uuid = util.UUID()
 	chatMsg.Content = roomChatCmd.Msg
 	chatMsg.CreatedAt = time.Unix(0, roomChatCmd.CreatedAt)
-	affected, err := db.Engine().Insert(chatMsg)
+	err = utils.InsertRecord(chatMsg)
 	if err != nil {
 		return err
-	}
-	if affected != 1 {
-		return errors.New("affected not 1")
 	}
 
 	users, err := services.FindRoomUserListByRoomID(toRoom.Id)
@@ -55,12 +51,9 @@ func PerformRoomChat(req Req, c *Client) (err error) {
 		urm.UserId = u.Id
 		urm.RoomMessageId = chatMsg.Id
 		urm.CreatedAt = chatMsg.CreatedAt
-		affected, err := db.Engine().Insert(urm)
+		err = utils.InsertRecord(urm)
 		if err != nil {
 			return err
-		}
-		if affected != 1 {
-			return errors.New("affected not 1")
 		}
 
 		// check to is online or not

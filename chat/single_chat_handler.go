@@ -2,13 +2,12 @@ package chat
 
 import (
 	"encoding/json"
-	"errors"
 	"log"
 	"time"
 
-	"github.com/FlowerWrong/anychat/db"
 	"github.com/FlowerWrong/anychat/models"
 	"github.com/FlowerWrong/anychat/services"
+	"github.com/FlowerWrong/anychat/utils"
 	"github.com/FlowerWrong/util"
 )
 
@@ -38,12 +37,9 @@ func PerformSingleChat(req Req, c *Client) (err error) {
 	chatMsg.Ack = req.Ack
 	chatMsg.Content = singleChatCmd.Msg
 	chatMsg.CreatedAt = time.Unix(0, singleChatCmd.CreatedAt)
-	affected, err := db.Engine().Insert(chatMsg)
+	err = utils.InsertRecord(chatMsg)
 	if err != nil {
 		return err
-	}
-	if affected != 1 {
-		return errors.New("affected not 1")
 	}
 
 	// ack response

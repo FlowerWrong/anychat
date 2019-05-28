@@ -17,3 +17,15 @@ func UpdateRecord(id int64, modelPointer interface{}) error {
 	}
 	return nil
 }
+
+// InsertRecord ...
+func InsertRecord(r interface{}) error {
+	affected, err := db.Engine().Insert(r)
+	if err != nil {
+		return err
+	}
+	if affected != 1 {
+		return errors.New("affected not 1")
+	}
+	return nil
+}

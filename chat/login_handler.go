@@ -2,10 +2,8 @@ package chat
 
 import (
 	"encoding/json"
-	"errors"
 	"time"
 
-	"github.com/FlowerWrong/anychat/db"
 	"github.com/FlowerWrong/anychat/models"
 	"github.com/FlowerWrong/anychat/services"
 	"github.com/FlowerWrong/anychat/utils"
@@ -45,12 +43,9 @@ func PerformLogin(req Req, c *Client) (err error) {
 	newLoginLog.Browser = browserName + ":" + browserVersion
 	newLoginLog.Os = ua.OS()
 	newLoginLog.Ip = c.realIP
-	affected, err := db.Engine().Insert(newLoginLog)
+	err = utils.InsertRecord(newLoginLog)
 	if err != nil {
 		return err
-	}
-	if affected != 1 {
-		return errors.New("affected not 1")
 	}
 
 	c.userID = user.Id // 设置client user id
