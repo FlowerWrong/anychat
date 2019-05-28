@@ -30,3 +30,6 @@
 * [ ] pub/sub based on redis
 * [ ] grpc
 * [ ] session reconnectable
+* [ ] registration center: consul 
+* [ ] configuration center
+* [ ] hot restart

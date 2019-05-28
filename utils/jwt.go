@@ -1,6 +1,7 @@
 package utils
 
 import (
+	"errors"
 	"time"
 
 	"github.com/FlowerWrong/anychat/models"
@@ -17,6 +18,9 @@ type CustomJWTClaims struct {
 	UUID     string `json:"uuid"`
 	jwt.StandardClaims
 }
+
+// ErrInvalidToken ...
+var ErrInvalidToken error = errors.New("Token is invalid")
 
 // GenerateToken ...
 func GenerateToken(user *models.User) (string, error) {
@@ -43,10 +47,12 @@ func ParseToken(tokenStr string) (*CustomJWTClaims, error) {
 	token, err := jwt.ParseWithClaims(tokenStr, &CustomJWTClaims{}, func(token *jwt.Token) (interface{}, error) {
 		return jwtSigningKey, nil
 	})
+	if err != nil {
+		return nil, err
+	}
 
 	if claims, ok := token.Claims.(*CustomJWTClaims); ok && token.Valid {
 		return claims, nil
-	} else {
-		return nil, err
 	}
+	return nil, ErrInvalidToken
 }

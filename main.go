@@ -11,7 +11,9 @@ import (
 	"github.com/FlowerWrong/anychat/chat"
 	"github.com/FlowerWrong/anychat/config"
 	"github.com/FlowerWrong/anychat/db"
+	"github.com/FlowerWrong/anychat/middlewares"
 	"github.com/gin-gonic/gin"
+	"github.com/spf13/viper"
 )
 
 func main() {
@@ -38,6 +40,7 @@ func main() {
 	go hub.Run()
 
 	app := gin.Default()
+	app.Use(middlewares.RateLimit())
 
 	app.LoadHTMLGlob("views/*")
 	app.GET("/", actions.HomeHandler)
@@ -46,19 +49,25 @@ func main() {
 	{
 		v1.GET("/health", actions.HealthHandler)
 		v1.POST("/login", actions.LoginHandler)
-		v1.POST("/upload", actions.UploadHandler)
+	}
 
-		v1.POST("/rooms", actions.CreateRoomHandler)
-		v1.GET("/rooms/:uuid", actions.ShowRoomHandler)
+	authGroup := app.Group("/api/v1", middlewares.JWTAuth())
+	{
+		authGroup.POST("/upload", actions.UploadHandler)
+
+		authGroup.POST("/rooms", actions.CreateRoomHandler)
+		authGroup.GET("/rooms/:uuid", actions.ShowRoomHandler)
 
 		// 获取历史聊天记录
-		v1.GET("/rooms/:uuid/messages", actions.RoomChatMsgHandler)
-		v1.GET("/messages", actions.SingleChatMsgHandler)
+		authGroup.GET("/rooms/:uuid/messages", actions.RoomChatMsgHandler)
+		authGroup.GET("/messages", actions.SingleChatMsgHandler)
 	}
+
 	app.GET("/anychat", func(c *gin.Context) {
 		actions.WsHandler(hub, c.Writer, c.Request)
 	})
-	err = app.Run(":8080")
+
+	err = app.Run(viper.GetString("server_url"))
 	if err != nil {
 		log.Fatal(err)
 	}
