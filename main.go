@@ -30,16 +30,6 @@ func main() {
 	}
 	log.Println(dbVersion[0]["version"])
 
-	err = db.Redis().SetNX("ping", "pong", 10*time.Second).Err()
-	if err != nil {
-		log.Fatal(err)
-	}
-	pong, err := db.Redis().Get("ping").Result()
-	if err != nil {
-		log.Fatal(err)
-	}
-	log.Println("redis", pong)
-
 	hub := chat.NewHub()
 	go hub.Run()
 
@@ -56,6 +46,10 @@ func main() {
 
 		v1.POST("/rooms", actions.CreateRoomHandler)
 		v1.GET("/rooms/:id", actions.ShowRoomHandler)
+
+		// 获取历史聊天记录
+		v1.GET("/rooms/:id/messages", actions.RoomChatMsgHandler)
+		v1.GET("/messages", actions.SingleChatMsgHandler)
 	}
 	app.GET("/anychat", func(c *gin.Context) {
 		actions.WsHandler(hub, c.Writer, c.Request)

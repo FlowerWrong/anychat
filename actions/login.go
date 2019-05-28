@@ -1,7 +1,6 @@
 package actions
 
 import (
-	"log"
 	"net/http"
 	"time"
 
@@ -48,8 +47,6 @@ func LoginHandler(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": statusCmd.Err().Error()})
 		return
 	}
-
-	log.Println(db.Redis().Get(user.Uuid).String())
 
 	c.JSON(http.StatusOK, gin.H{"token": token})
 }

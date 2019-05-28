@@ -3,12 +3,31 @@ package actions
 import (
 	"net/http"
 
+	"github.com/FlowerWrong/anychat/db"
 	"github.com/gin-gonic/gin"
 )
 
 // HealthHandler ... TODO plugin, eg database, redis, nats check
 func HealthHandler(c *gin.Context) {
+	var redisStatus string
+	_, err := db.Redis().Ping().Result()
+	if err != nil {
+		redisStatus = err.Error()
+	} else {
+		redisStatus = "running"
+	}
+
+	var dbStatus string
+	_, err = db.Engine().SqlTemplateClient("version.tpl").Query().List()
+	if err != nil {
+		dbStatus = err.Error()
+	} else {
+		dbStatus = "running"
+	}
+
 	c.JSON(http.StatusOK, gin.H{
-		"message": "ok",
+		"app":      "running",
+		"redis":    redisStatus,
+		"database": dbStatus,
 	})
 }

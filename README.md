@@ -23,3 +23,8 @@
 ## Design
 
 用户列表统一存储在redis，key为user.UUID，value为node host:port，即所在服务器实例，走rpc
+
+## TODO
+
+* [ ] pub/sub based on redis
+* [ ] grpc
