@@ -104,7 +104,29 @@ class Connection {
     for (let eventName in this.events) {
       const handler = this.events[eventName].bind(this)
       this.webSocket[`on${eventName}`] = handler
+      logger.log(`Install event handler ${handler} for ${eventName}`)
     }
+  }
+
+  onHandshake(callback) {
+    logger.log("Handshake success")
+    callback()
+  }
+
+  onMessage(cmd, ack, data) {
+    logger.log("on message", cmd, ack, data)
+  }
+
+  onAckMessage(cmd, ack, data) {
+    logger.log("on ack message", cmd, ack, data)
+  }
+
+  onChatMessage(cmd, ack, data) {
+    logger.log("on chat message", cmd, ack, data)
+  }
+
+  onRoomChatMessage(cmd, ack, data) {
+    logger.log("on room chat message", cmd, ack, data)
   }
 
   uninstallEventHandlers() {
@@ -131,13 +153,13 @@ Connection.prototype.events = {
       case message_types.ping:
         return this.monitor.recordPing()
       case message_types.ack:
-        return
+        return this.onAckMessage(cmd, ack, data)
       case message_types.single_chat:
-        return
+        return this.onChatMessage(cmd, ack, data)
       case message_types.room_chat:
-        return
+        return this.onRoomChatMessage(cmd, ack, data)
       default:
-        return
+        return this.onMessage(cmd, ack, data)
     }
   },
 
@@ -151,7 +173,7 @@ Connection.prototype.events = {
   },
 
   close(event) {
-    logger.log("WebSocket onclose event")
+    logger.log("WebSocket onclose event", event)
     if (this.disconnected) { return }
     this.disconnected = true
     this.monitor.recordDisconnect()
