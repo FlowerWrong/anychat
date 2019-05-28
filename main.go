@@ -45,10 +45,10 @@ func main() {
 		v1.POST("/upload", actions.UploadHandler)
 
 		v1.POST("/rooms", actions.CreateRoomHandler)
-		v1.GET("/rooms/:id", actions.ShowRoomHandler)
+		v1.GET("/rooms/:uuid", actions.ShowRoomHandler)
 
 		// 获取历史聊天记录
-		v1.GET("/rooms/:id/messages", actions.RoomChatMsgHandler)
+		v1.GET("/rooms/:uuid/messages", actions.RoomChatMsgHandler)
 		v1.GET("/messages", actions.SingleChatMsgHandler)
 	}
 	app.GET("/anychat", func(c *gin.Context) {

@@ -41,42 +41,46 @@ func PerformRoomChat(req Req, c *Client) (err error) {
 		return err
 	}
 
-	users, err := services.FindRoomUserListByRoomID(toRoom.Id)
+	roomUsers, err := services.FindRoomUserListByRoomID(toRoom.Id)
 	if err != nil {
 		return err
 	}
-	for _, u := range users {
+	for _, ru := range roomUsers {
 		urm := new(models.UserRoomMessage)
 		urm.Uuid = util.UUID()
-		urm.UserId = u.Id
+		urm.UserId = ru.UserId
 		urm.RoomMessageId = chatMsg.Id
 		urm.CreatedAt = chatMsg.CreatedAt
+		if ru.UserId == c.userID {
+			urm.ReadAt = time.Now()
+		}
 		err = utils.InsertRecord(urm)
 		if err != nil {
 			return err
 		}
 
-		// check to is online or not
-		toClient, err := c.hub.FindClientByUserID(u.Id)
-		if err != nil {
-			log.Println(err)
-			// offline
-
-			// email and sms notification TODO
-		} else {
-			// online
-			data, err := buildRes(req.Cmd, urm.Uuid, RoomChatRes{UUID: chatMsg.Uuid, From: roomChatCmd.From, To: roomChatCmd.To, Msg: roomChatCmd.Msg, CreatedAt: roomChatCmd.CreatedAt})
+		if ru.UserId != c.userID {
+			// check to is online or not
+			toClient, err := c.hub.FindClientByUserID(ru.UserId)
 			if err != nil {
-				return err
+				log.Println(err)
+				// offline
+
+				// email and sms notification TODO
+			} else {
+				// online
+				data, err := buildRes(req.Cmd, urm.Uuid, RoomChatRes{UUID: chatMsg.Uuid, From: roomChatCmd.From, To: roomChatCmd.To, Msg: roomChatCmd.Msg, CreatedAt: roomChatCmd.CreatedAt})
+				if err != nil {
+					return err
+				}
+				toClient.send <- data
 			}
-			toClient.send <- data
 		}
 	}
 
 	// ack response
 	err = c.sendAckRes(req.Ack, TypeRoomChat)
 	if err != nil {
-		log.Println(err)
 		return err
 	}
 	return nil

@@ -63,7 +63,7 @@ func (h *Hub) FindClientByUserID(userID int64) (*Client, error) {
 			return client, nil
 		}
 	}
-	return nil, errors.New("record not found")
+	return nil, errors.New("This user is offline")
 }
 
 // FindOnlineUserList from give user list

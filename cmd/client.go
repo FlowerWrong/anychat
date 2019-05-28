@@ -86,6 +86,22 @@ func (s *Session) sendChatMsg(chatToUUID, msg string) error {
 	return nil
 }
 
+func (s *Session) sendRoomChatMsg(chatToRoomUUID, msg string) error {
+	raw, err := utils.RawMsg(chat.RoomChatCmd{From: s.userID, To: chatToRoomUUID, Msg: msg, CreatedAt: time.Now().UnixNano()})
+	if err != nil {
+		log.Println(err)
+		return err
+	}
+	chatReq := chat.Req{Base: chat.Base{Ack: "room_chat", Cmd: chat.TypeRoomChat}, Data: raw}
+	chatJSON, err := json.Marshal(chatReq)
+	if err != nil {
+		log.Println(err)
+		return err
+	}
+	s.send <- chatJSON
+	return nil
+}
+
 func main() {
 	rand.Seed(time.Now().UnixNano())
 	log.SetFlags(log.LstdFlags | log.Lshortfile)
@@ -95,6 +111,7 @@ func main() {
 	username := flag.String("username", "", "login username")
 	password := flag.String("password", "", "login password")
 	chatToUUID := flag.String("to", "", "chat to someone's uuid")
+	chatToRoomUUID := flag.String("room", "", "chat to room's uuid")
 	flag.Parse()
 
 	conn, _, err := websocket.DefaultDialer.Dial("ws://localhost:8080/anychat", nil)
@@ -169,14 +186,7 @@ func main() {
 					log.Println(err)
 					break
 				}
-				_, _ = w.Write(message)
-
-				// Add queued chat messages to the current websocket message.
-				n := len(session.send)
-				for i := 0; i < n; i++ {
-					_, _ = w.Write(<-session.send)
-				}
-
+				_, err = w.Write(message)
 				if err := w.Close(); err != nil {
 					log.Println(err)
 					break
@@ -211,8 +221,13 @@ func main() {
 				if err != nil {
 					break
 				}
-				session.updateStage(4)
+				session.updateStage(5)
 			case 5:
+				err = session.sendRoomChatMsg(*chatToRoomUUID, "Hi!, every one.")
+				if err != nil {
+					break
+				}
+				session.updateStage(6)
 			case 7:
 			case 9:
 				break
