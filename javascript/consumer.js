@@ -1,4 +1,5 @@
 import Connection from "./connection"
+import Emitter from "component-emitter"
 
 // The ActionCable.Consumer establishes the connection to a server-side Ruby Connection object. Once established,
 // the ActionCable.ConnectionMonitor will ensure that its properly maintained through heartbeats and checking for stale updates.
@@ -26,6 +27,8 @@ export default class Consumer {
   constructor(url) {
     this._url = url
     this.connection = new Connection(this)
+    this.emitter = new Emitter()
+    this.events = ['handshake', 'ack_message', 'chat_message', 'room_message', 'message']
   }
 
   get url() {

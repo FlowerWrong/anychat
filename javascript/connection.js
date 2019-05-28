@@ -108,27 +108,6 @@ class Connection {
     }
   }
 
-  onHandshake(callback) {
-    logger.log("Handshake success")
-    callback()
-  }
-
-  onMessage(cmd, ack, data) {
-    logger.log("on message", cmd, ack, data)
-  }
-
-  onAckMessage(cmd, ack, data) {
-    logger.log("on ack message", cmd, ack, data)
-  }
-
-  onChatMessage(cmd, ack, data) {
-    logger.log("on chat message", cmd, ack, data)
-  }
-
-  onRoomChatMessage(cmd, ack, data) {
-    logger.log("on room chat message", cmd, ack, data)
-  }
-
   uninstallEventHandlers() {
     for (let eventName in this.events) {
       this.webSocket[`on${eventName}`] = function() {}
@@ -146,20 +125,21 @@ Connection.prototype.events = {
     const {cmd, ack, data} = JSON.parse(event.data)
     switch (cmd) {
       case message_types.welcome:
-        return this.monitor.recordConnect()
+        this.monitor.recordConnect()
+        return this.consumer.emitter.emit('handshake', cmd, ack, data)
       case message_types.disconnect:
         logger.log(`Disconnecting. Reason: ${data.reason}`)
         return this.close({allowReconnect: data.reconnect})
       case message_types.ping:
         return this.monitor.recordPing()
       case message_types.ack:
-        return this.onAckMessage(cmd, ack, data)
+        return this.consumer.emitter.emit('ack_message', cmd, ack, data)
       case message_types.single_chat:
-        return this.onChatMessage(cmd, ack, data)
+        return this.consumer.emitter.emit('chat_message', cmd, ack, data)
       case message_types.room_chat:
-        return this.onRoomChatMessage(cmd, ack, data)
+        return this.consumer.emitter.emit('room_message', cmd, ack, data)
       default:
-        return this.onMessage(cmd, ack, data)
+        return this.consumer.emitter.emit('message', cmd, ack, data)
     }
   },
 

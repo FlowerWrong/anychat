@@ -35,8 +35,7 @@
       consumer = anychat.createConsumer("ws://127.0.0.1:8080/anychat");
       consumer.ensureActiveConnection();
 
-      consumer.connection.onHandshake(function () {
-        console.log("login")
+      consumer.emitter.on('handshake', function (cmd, ack, data) {
         var loginJSON = {
           cmd: "login",
           ack: "login",
@@ -47,6 +46,16 @@
           }
         };
         consumer.send(loginJSON);
+      })
+
+      consumer.emitter.on('ack_message', function (cmd, ack, data) {})
+
+      consumer.emitter.on('chat_message', function (cmd, ack, data) {})
+
+      consumer.emitter.on('room_message', function (cmd, ack, data) {})
+
+      consumer.emitter.on('message', function (cmd, ack, data) {
+        anychat.logger.log("on message event", cmd, ack, data)
       })
     });
   </script>
