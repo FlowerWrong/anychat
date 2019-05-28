@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_05_27_054549) do
+ActiveRecord::Schema.define(version: 2019_05_28_050507) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -22,6 +22,20 @@ ActiveRecord::Schema.define(version: 2019_05_27_054549) do
     t.text "content", comment: "内容"
     t.string "ack", comment: "req ack"
     t.datetime "read_at", comment: "已读时间"
+    t.datetime "deleted_at", comment: "删除时间"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+  end
+
+  create_table "login_logs", force: :cascade do |t|
+    t.integer "user_id", comment: "用户"
+    t.string "ua", comment: "user agent"
+    t.string "ip", comment: "IP地址"
+    t.string "lan_ip", comment: "LAN IP地址"
+    t.string "os", comment: "操作系统"
+    t.string "browser", comment: "浏览器"
+    t.decimal "latitude", precision: 20, scale: 17, comment: "纬度"
+    t.decimal "longitude", precision: 20, scale: 17, comment: "经度"
     t.datetime "deleted_at", comment: "删除时间"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
@@ -75,13 +89,6 @@ ActiveRecord::Schema.define(version: 2019_05_27_054549) do
     t.string "email", comment: "邮箱"
     t.string "avatar", comment: "头像"
     t.string "note", comment: "备注"
-    t.string "ua", comment: "user agent"
-    t.string "ip", comment: "IP地址"
-    t.string "lan_ip", comment: "LAN IP地址"
-    t.string "os", comment: "操作系统"
-    t.string "browser", comment: "浏览器"
-    t.decimal "latitude", precision: 20, scale: 17, comment: "纬度"
-    t.decimal "longitude", precision: 20, scale: 17, comment: "经度"
     t.datetime "first_login_at", comment: "第一次登录时间"
     t.datetime "last_active_at", comment: "最后一次活跃时间"
     t.datetime "deleted_at", comment: "删除时间"

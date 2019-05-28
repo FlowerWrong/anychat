@@ -15,10 +15,10 @@ func PerformGeo(req Req, c *Client) (err error) {
 		return err
 	}
 
-	user := new(models.User)
-	user.Latitude = geoCmd.Latitude
-	user.Longitude = geoCmd.Longitude
-	err = utils.UpdateRecord(c.userID, user)
+	updateLoginLog := new(models.LoginLog)
+	updateLoginLog.Latitude = geoCmd.Latitude
+	updateLoginLog.Longitude = geoCmd.Longitude
+	err = utils.UpdateRecord(c.loginLogID, updateLoginLog)
 	if err != nil {
 		return err
 	}

@@ -13,13 +13,6 @@ type User struct {
 	Email          string    `xorm:"VARCHAR"`
 	Avatar         string    `xorm:"VARCHAR"`
 	Note           string    `xorm:"VARCHAR"`
-	Ua             string    `xorm:"VARCHAR"`
-	Ip             string    `xorm:"VARCHAR"`
-	LanIp          string    `xorm:"VARCHAR"`
-	Os             string    `xorm:"VARCHAR"`
-	Browser        string    `xorm:"VARCHAR"`
-	Latitude       float64   `xorm:"DOUBLE"`
-	Longitude      float64   `xorm:"DOUBLE"`
 	FirstLoginAt   time.Time `xorm:"DATETIME"`
 	LastActiveAt   time.Time `xorm:"DATETIME"`
 	DeletedAt      time.Time `xorm:"deleted"`

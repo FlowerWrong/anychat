@@ -15,9 +15,9 @@ func PerformLANIP(req Req, c *Client) (err error) {
 		return err
 	}
 
-	user := new(models.User)
-	user.LanIp = lanIPCmd.LanIP
-	err = utils.UpdateRecord(c.userID, user)
+	updateLoginLog := new(models.LoginLog)
+	updateLoginLog.LanIp = lanIPCmd.LanIP
+	err = utils.UpdateRecord(c.loginLogID, updateLoginLog)
 	if err != nil {
 		return err
 	}

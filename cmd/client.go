@@ -145,7 +145,7 @@ func main() {
 			case chat.TypeSingleChat:
 				log.Println(m["from"], "say", m["msg"], "to you")
 			case chat.TypeAck:
-				log.Println(m["action"].(int32))
+				log.Println(m["action"].(string))
 				switch m["action"] {
 				case chat.TypeSingleChat:
 					// TODO

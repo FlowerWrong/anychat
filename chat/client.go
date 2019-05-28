@@ -50,9 +50,10 @@ type Client struct {
 	closed    bool
 	connected bool
 
-	realIP   string
-	userID   int64
-	userUUID string
+	realIP     string
+	userID     int64
+	userUUID   string
+	loginLogID int64
 
 	pingTimer *time.Timer
 

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # setting
 Faker::Config.locale = 'zh-CN'
 
@@ -17,29 +19,28 @@ Faker::Config.locale = 'zh-CN'
   user.save!
 end
 
-user = User.new(
+user1 = User.new(
   uuid: SecureRandom.uuid,
   username: 'yang',
   password: '123456',
   password_confirmation: '123456',
   mobile: '13560474456',
   email: 'sysuyangkang@gmail.com',
-  avatar: Faker::Avatar.image(7, '50x50', 'jpg'),
+  avatar: Faker::Avatar.image(101, '50x50', 'jpg'),
   first_login_at: Time.now,
   last_active_at: Time.now
 )
-user.save!
+user1.save!
 
-
-user = User.new(
+user2 = User.new(
   uuid: SecureRandom.uuid,
   username: 'lin',
   password: '123456',
   password_confirmation: '123456',
-  mobile: '13368661883',
+  mobile: '13560474457',
   email: 'linzi@gmail.com',
   avatar: Faker::Avatar.image(102, '50x50', 'jpg'),
   first_login_at: Time.now,
   last_active_at: Time.now
 )
-user.save!
+user2.save!
