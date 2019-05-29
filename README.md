@@ -5,13 +5,12 @@
 ## 技术栈
 
 * [postgresql 11.2+](https://www.postgresql.org/)
-* [rails 6](https://rubyonrails.org/)
+* [rails 6](https://rubyonrails.org/): db and test only
 * [gorilla/websocket](https://github.com/gorilla/websocket)
 * [go-micro](https://micro.mu/)
 * [opencensus](https://github.com/census-instrumentation/opencensus-go): A stats collection and distributed tracing framework
 * [uber zap](https://github.com/uber-go/zap) + [lumberjack](https://github.com/natefinch/lumberjack)
-* [apex/log](https://github.com/apex/log)
-* [yuin/gopher-lua](https://github.com/yuin/gopher-lua)
+* [otto](https://github.com/robertkrimen/otto): a javascript interpreter
 * [blevesearch/bleve](https://github.com/blevesearch/bleve)
 * [xormplus](https://github.com/xormplus/xorm)
 * [viper](https://github.com/spf13/viper)
@@ -30,6 +29,6 @@
 * [ ] pub/sub based on redis
 * [ ] grpc
 * [ ] session reconnectable
-* [ ] registration center: consul 
+* [ ] registration center: consul
 * [ ] configuration center
 * [ ] hot restart
