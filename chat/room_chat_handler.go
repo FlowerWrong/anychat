@@ -12,7 +12,7 @@ import (
 )
 
 // PerformRoomChat ...
-func PerformRoomChat(req Req, c *Client) (err error) {
+func (c *Client) PerformRoomChat(req Req) (err error) {
 	var roomChatCmd RoomChatCmd
 	err = json.Unmarshal(req.Data, &roomChatCmd)
 	if err != nil {

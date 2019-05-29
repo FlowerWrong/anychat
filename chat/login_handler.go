@@ -11,7 +11,7 @@ import (
 )
 
 // PerformLogin ...
-func PerformLogin(req Req, c *Client) (err error) {
+func (c *Client) PerformLogin(req Req) (err error) {
 	var loginCmd LoginCmd
 	err = json.Unmarshal(req.Data, &loginCmd)
 	if err != nil {

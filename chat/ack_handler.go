@@ -10,7 +10,7 @@ import (
 )
 
 // PerformAck ...
-func PerformAck(req Req, c *Client) (err error) {
+func (c *Client) PerformAck(req Req) (err error) {
 	var ack Ack
 	err = json.Unmarshal(req.Data, &ack)
 	if err != nil {

@@ -76,7 +76,7 @@ func (c *Client) logical(message []byte) error {
 	}
 
 	if req.Cmd == TypeLogin {
-		err = PerformLogin(req, c)
+		err = c.PerformLogin(req)
 		if err != nil {
 			return err
 		}
@@ -88,27 +88,27 @@ func (c *Client) logical(message []byte) error {
 		case TypeReConn: // without ack response
 			// 掉线重连 TODO
 		case TypeGeo: // without ack response
-			err = PerformGeo(req, c)
+			err = c.PerformGeo(req)
 			if err != nil {
 				return err
 			}
 		case TypeLanIP: // without ack response
-			err = PerformLANIP(req, c)
+			err = c.PerformLANIP(req)
 			if err != nil {
 				return err
 			}
 		case TypeSingleChat: // with ack response
-			err = PerformSingleChat(req, c)
+			err = c.PerformSingleChat(req)
 			if err != nil {
 				return err
 			}
 		case TypeRoomChat: // with ack response
-			err = PerformRoomChat(req, c)
+			err = c.PerformRoomChat(req)
 			if err != nil {
 				return err
 			}
 		case TypeAck: // without ack response
-			err = PerformAck(req, c)
+			err = c.PerformAck(req)
 			if err != nil {
 				return err
 			}

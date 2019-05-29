@@ -8,7 +8,7 @@ import (
 )
 
 // PerformGeo ...
-func PerformGeo(req Req, c *Client) (err error) {
+func (c *Client) PerformGeo(req Req) (err error) {
 	var geoCmd GeoCmd
 	err = json.Unmarshal(req.Data, &geoCmd)
 	if err != nil {

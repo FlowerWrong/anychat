@@ -8,7 +8,7 @@ import (
 )
 
 // PerformLANIP ...
-func PerformLANIP(req Req, c *Client) (err error) {
+func (c *Client) PerformLANIP(req Req) (err error) {
 	var lanIPCmd LanIPCmd
 	err = json.Unmarshal(req.Data, &lanIPCmd)
 	if err != nil {

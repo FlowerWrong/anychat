@@ -12,7 +12,7 @@ import (
 )
 
 // PerformSingleChat ...
-func PerformSingleChat(req Req, c *Client) (err error) {
+func (c *Client) PerformSingleChat(req Req) (err error) {
 	var singleChatCmd SingleChatCmd
 	err = json.Unmarshal(req.Data, &singleChatCmd)
 	if err != nil {
