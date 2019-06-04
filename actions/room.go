@@ -17,6 +17,8 @@ type roomVM struct {
 	Logo      string   `form:"logo" json:"logo" xml:"logo" binding:"required"`
 }
 
+// TODO 事务
+
 // CreateRoomHandler ...
 func CreateRoomHandler(c *gin.Context) {
 	var roomForm roomVM
