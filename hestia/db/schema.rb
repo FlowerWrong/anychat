@@ -65,6 +65,7 @@ ActiveRecord::Schema.define(version: 2019_05_28_050507) do
     t.string "uuid", comment: "uuid"
     t.string "name", comment: "群名称"
     t.text "intro", comment: "群介绍"
+    t.integer "creator_id", comment: "创建者"
     t.string "logo", comment: "群logo"
     t.datetime "deleted_at", comment: "删除时间"
     t.datetime "created_at", precision: 6, null: false

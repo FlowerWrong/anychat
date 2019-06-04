@@ -1,7 +1,6 @@
 package actions
 
 import (
-	"log"
 	"net/http"
 
 	"github.com/FlowerWrong/anychat/models"
@@ -25,17 +24,29 @@ func CreateRoomHandler(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	log.Println(roomForm)
+
+	currentUserI, exists := c.Get("currentUser")
+	if exists == false {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "current user not found"})
+		return
+	}
+	currentUser := currentUserI.(*models.User)
 
 	room := new(models.Room)
 	room.Uuid = util.UUID()
 	room.Name = roomForm.Name
 	room.Intro = roomForm.Intro
+	room.CreatorId = currentUser.Id
 	room.Logo = roomForm.Logo
 	err := utils.InsertRecord(room)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
+	}
+
+	// 添加自己
+	if !utils.Contains(roomForm.UserUUIDs, currentUser.Uuid) {
+		roomForm.UserUUIDs = append(roomForm.UserUUIDs, currentUser.Uuid)
 	}
 
 	for _, uuid := range roomForm.UserUUIDs {
@@ -57,14 +68,34 @@ func CreateRoomHandler(c *gin.Context) {
 		}
 	}
 
-	c.JSON(http.StatusOK, gin.H{
-		"room_uuid": room.Uuid,
-	})
+	c.JSON(http.StatusOK, room)
 }
 
 // ShowRoomHandler ...
 func ShowRoomHandler(c *gin.Context) {
+	currentUserI, exists := c.Get("currentUser")
+	if exists == false {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "current user not found"})
+		return
+	}
+	currentUser := currentUserI.(*models.User)
+
+	uuids, err := services.FindMyRoomUUIDList(currentUser)
+	if err != nil {
+		c.JSON(http.StatusNotFound, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+
 	uuid := c.Param("uuid")
+	if !utils.Contains(uuids, uuid) {
+		c.JSON(http.StatusForbidden, gin.H{
+			"error": "403",
+		})
+		return
+	}
+
 	room, err := services.FindRoomByUUID(uuid)
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{
@@ -72,7 +103,25 @@ func ShowRoomHandler(c *gin.Context) {
 		})
 		return
 	}
-	c.JSON(http.StatusOK, gin.H{
-		"room_uuid": room.Uuid,
-	})
+	c.JSON(http.StatusOK, room)
+}
+
+// IndexRoomHandler ...
+func IndexRoomHandler(c *gin.Context) {
+	currentUserI, exists := c.Get("currentUser")
+	if exists == false {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "current user not found"})
+		return
+	}
+	currentUser := currentUserI.(*models.User)
+
+	rooms, err := services.FindMyRoomList(currentUser)
+	if err != nil {
+		c.JSON(http.StatusNotFound, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, rooms)
 }

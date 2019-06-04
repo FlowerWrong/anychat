@@ -55,6 +55,7 @@ func main() {
 	{
 		authGroup.POST("/upload", actions.UploadHandler)
 
+		authGroup.GET("/rooms", actions.IndexRoomHandler)
 		authGroup.POST("/rooms", actions.CreateRoomHandler)
 		authGroup.GET("/rooms/:uuid", actions.ShowRoomHandler)
 

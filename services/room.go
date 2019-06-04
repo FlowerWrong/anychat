@@ -29,3 +29,37 @@ func FindRoomUserListByRoomID(id int64) ([]models.RoomUser, error) {
 	}
 	return ru, nil
 }
+
+// FindMyRoomList 我的群聊列表
+func FindMyRoomList(currentUser *models.User) ([]models.Room, error) {
+	paramMap := map[string]interface{}{"user_id": currentUser.Id}
+	var rooms []models.Room
+	err := db.Engine().SqlTemplateClient("my_room_list.tpl", &paramMap).Find(&rooms)
+	if err != nil {
+		return nil, err
+	}
+	return rooms, nil
+}
+
+// FindMyRoomUUIDList 我的群聊uuid列表
+func FindMyRoomUUIDList(currentUser *models.User) ([]string, error) {
+	rooms, err := FindMyRoomList(currentUser)
+	if err != nil {
+		return nil, err
+	}
+	var uuids []string
+	for _, room := range rooms {
+		uuids = append(uuids, room.Uuid)
+	}
+	return uuids, nil
+}
+
+// FindMyCreatedRoomList 我创建的room列表
+func FindMyCreatedRoomList(currentUser *models.User) ([]models.Room, error) {
+	var rooms []models.Room
+	err := db.Engine().Where("creator_id = ?", currentUser.Id).Find(&rooms)
+	if err != nil {
+		return nil, err
+	}
+	return rooms, nil
+}
