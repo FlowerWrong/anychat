@@ -6,7 +6,7 @@ import (
 	"github.com/FlowerWrong/anychat/chat"
 )
 
-// WsHandler ...
-func WsHandler(hub *chat.Hub, w http.ResponseWriter, r *http.Request) {
+// WebsocketHandler ...
+func WebsocketHandler(hub *chat.Hub, w http.ResponseWriter, r *http.Request) {
 	chat.HandleWs(hub, w, r)
 }

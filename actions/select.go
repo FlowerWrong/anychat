@@ -10,5 +10,6 @@ import (
 func SelectHandler(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{
 		"host": "1.1.1.1",
+		"port": 8080,
 	})
 }

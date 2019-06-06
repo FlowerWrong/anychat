@@ -7,7 +7,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// HealthHandler ... TODO plugin, eg database, redis, nats check
+// HealthHandler ...
 func HealthHandler(c *gin.Context) {
 	var redisStatus string
 	_, err := db.Redis().Ping().Result()

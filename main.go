@@ -36,9 +36,6 @@ func main() {
 	}
 	log.Println(dbVersion[0]["version"])
 
-	hub := chat.NewHub()
-	go hub.Run()
-
 	app := gin.Default()
 	app.Use(middlewares.RateLimit())
 
@@ -64,8 +61,10 @@ func main() {
 		authGroup.GET("/messages", actions.SingleChatMsgHandler)
 	}
 
+	hub := chat.NewHub()
+	go hub.Run()
 	app.GET("/anychat", func(c *gin.Context) {
-		actions.WsHandler(hub, c.Writer, c.Request)
+		actions.WebsocketHandler(hub, c.Writer, c.Request)
 	})
 
 	err = app.Run(viper.GetString("server_url"))
