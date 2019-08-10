@@ -12,10 +12,7 @@
 
 ActiveRecord::Schema.define(version: 2019_05_28_050507) do
 
-  # These are extensions that must be enabled in order to support this database
-  enable_extension "plpgsql"
-
-  create_table "chat_messages", comment: "私聊消息", force: :cascade do |t|
+  create_table "chat_messages", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci", comment: "私聊消息", force: :cascade do |t|
     t.string "uuid", comment: "uuid"
     t.integer "from", comment: "发送人"
     t.integer "to", comment: "接收人"
@@ -27,7 +24,7 @@ ActiveRecord::Schema.define(version: 2019_05_28_050507) do
     t.datetime "updated_at", precision: 6, null: false
   end
 
-  create_table "login_logs", force: :cascade do |t|
+  create_table "login_logs", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.integer "user_id", comment: "用户"
     t.string "ua", comment: "user agent"
     t.string "ip", comment: "IP地址"
@@ -41,7 +38,7 @@ ActiveRecord::Schema.define(version: 2019_05_28_050507) do
     t.datetime "updated_at", precision: 6, null: false
   end
 
-  create_table "room_messages", comment: "群消息", force: :cascade do |t|
+  create_table "room_messages", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci", comment: "群消息", force: :cascade do |t|
     t.string "uuid", comment: "uuid"
     t.integer "from", comment: "发送人"
     t.integer "room_id", comment: "群"
@@ -51,7 +48,7 @@ ActiveRecord::Schema.define(version: 2019_05_28_050507) do
     t.datetime "updated_at", precision: 6, null: false
   end
 
-  create_table "room_users", comment: "群用户", force: :cascade do |t|
+  create_table "room_users", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci", comment: "群用户", force: :cascade do |t|
     t.string "uuid", comment: "uuid"
     t.integer "user_id"
     t.integer "room_id"
@@ -61,7 +58,7 @@ ActiveRecord::Schema.define(version: 2019_05_28_050507) do
     t.datetime "updated_at", precision: 6, null: false
   end
 
-  create_table "rooms", comment: "群", force: :cascade do |t|
+  create_table "rooms", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci", comment: "群", force: :cascade do |t|
     t.string "uuid", comment: "uuid"
     t.string "name", comment: "群名称"
     t.text "intro", comment: "群介绍"
@@ -72,7 +69,7 @@ ActiveRecord::Schema.define(version: 2019_05_28_050507) do
     t.datetime "updated_at", precision: 6, null: false
   end
 
-  create_table "user_room_messages", comment: "群人员消息", force: :cascade do |t|
+  create_table "user_room_messages", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci", comment: "群人员消息", force: :cascade do |t|
     t.string "uuid", comment: "uuid"
     t.integer "user_id", comment: "群人员"
     t.integer "room_message_id", comment: "群消息"
@@ -82,7 +79,7 @@ ActiveRecord::Schema.define(version: 2019_05_28_050507) do
     t.datetime "updated_at", precision: 6, null: false
   end
 
-  create_table "users", comment: "用户", force: :cascade do |t|
+  create_table "users", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci", comment: "用户", force: :cascade do |t|
     t.string "uuid", comment: "uuid"
     t.string "username", comment: "用户名"
     t.string "password_digest", comment: "密码"

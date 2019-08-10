@@ -12,7 +12,7 @@ Faker::Config.locale = 'zh-CN'
     password_confirmation: '123456',
     mobile: Faker::PhoneNumber.cell_phone.gsub(/\D/, ''),
     email: Faker::Internet.email,
-    avatar: Faker::Avatar.image(i, '50x50', 'jpg'),
+    avatar: Faker::Avatar.image,
     first_login_at: Time.now,
     last_active_at: Time.now
   )
@@ -26,7 +26,7 @@ user1 = User.new(
   password_confirmation: '123456',
   mobile: '13560474456',
   email: 'sysuyangkang@gmail.com',
-  avatar: Faker::Avatar.image(101, '50x50', 'jpg'),
+  avatar: Faker::Avatar.image,
   first_login_at: Time.now,
   last_active_at: Time.now
 )
@@ -39,7 +39,7 @@ user2 = User.new(
   password_confirmation: '123456',
   mobile: '13560474457',
   email: 'linzi@gmail.com',
-  avatar: Faker::Avatar.image(102, '50x50', 'jpg'),
+  avatar: Faker::Avatar.image,
   first_login_at: Time.now,
   last_active_at: Time.now
 )

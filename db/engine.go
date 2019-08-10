@@ -4,7 +4,7 @@ import (
 	"sync"
 
 	// justifying it
-	_ "github.com/lib/pq"
+	_ "github.com/go-sql-driver/mysql"
 	"github.com/spf13/viper"
 	"github.com/xormplus/xorm"
 )
